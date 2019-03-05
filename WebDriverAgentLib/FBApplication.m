@@ -11,6 +11,8 @@
 
 #import "FBRunLoopSpinner.h"
 #import "FBMacros.h"
+#import "UIApplication-KIFAdditions.h"
+#import "UIView+FBHelper.h"
 
 @interface FBApplication ()
 @property (nonatomic, assign) BOOL fb_isObservingAppImplCurrentProcess;
@@ -48,6 +50,23 @@
 - (NSString *)bundleID
 {
     NSString *bundleId = [[NSBundle mainBundle] objectForInfoDictionaryKey:kCFBundleIdentifierKey];
+}
+
+- (NSDictionary *)fb_tree
+{
+    NSArray <UIWindow *> *allWindows = UIApplication.sharedApplication.windows;
+    NSMutableArray <NSDictionary *> *windows = [NSMutableArray array];
+    for (UIWindow *window in allWindows) {
+        NSDictionary *viewDict = [UIView fb_dictionaryForView:window];
+        [windows addObject:viewDict];
+    }
+    NSString *screenRect = NSStringFromCGRect(CGRectIntegral([UIScreen.mainScreen bounds]));
+    return @{@"children": windows,
+             @"rect": [UIView fb_formattedRectWithFrame:[UIScreen.mainScreen bounds]],
+             @"isEnabled": @"1",
+             @"isVisible": @"1",
+             @"frame": screenRect,
+             @"type": @"UIScreen"};
 }
 
 //

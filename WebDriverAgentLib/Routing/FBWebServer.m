@@ -71,9 +71,9 @@ static NSString *const FBServerURLEndMarker = @"<-ServerURLHere";
   [self startHTTPServer];
 
   self.keepAlive = YES;
-  NSRunLoop *runLoop = [NSRunLoop mainRunLoop];
-  while (self.keepAlive &&
-         [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]);
+//  NSRunLoop *runLoop = [NSRunLoop mainRunLoop];
+//  while (self.keepAlive &&
+//         [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]);
 }
 
 - (void)startHTTPServer

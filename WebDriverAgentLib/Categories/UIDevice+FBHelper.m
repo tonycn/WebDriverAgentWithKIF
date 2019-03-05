@@ -50,6 +50,14 @@
 
 - (NSData *)fb_screenshotWithError:(NSError **)error
 {
-    return nil;
+    NSArray <UIWindow *> *allWindows = UIApplication.sharedApplication.windows;
+    UIWindow *topWindow = allWindows.lastObject;
+    UIGraphicsBeginImageContextWithOptions(topWindow.bounds.size, NO, [UIScreen mainScreen].scale);
+
+    [topWindow.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    NSData *imageData = UIImagePNGRepresentation(image);
+    return imageData;
 }
 @end

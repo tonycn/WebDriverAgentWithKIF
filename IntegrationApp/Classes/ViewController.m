@@ -10,10 +10,18 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-@property (weak, nonatomic) IBOutlet UILabel *orentationLabel;
+@property (strong, nonatomic) IBOutlet UILabel *orentationLabel;
 @end
 
 @implementation ViewController
+
+- (void)viewDidLoad {
+  [super viewDidLoad];
+  self.view.backgroundColor = [UIColor whiteColor];
+  self.orentationLabel = [[UILabel alloc] init];
+  self.orentationLabel.textAlignment = NSTextAlignmentCenter;
+  [self.view addSubview:self.orentationLabel];
+}
 
 - (IBAction)deadlockApp:(id)sender
 {
@@ -30,6 +38,9 @@
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+  
+  self.orentationLabel.frame = CGRectMake(0, 0, 240, 80);
+  self.orentationLabel.center = self.view.center;
   [self updateOrentationLabel];
 }
 

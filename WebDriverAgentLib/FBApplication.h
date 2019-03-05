@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)launch;
 
+- (NSDictionary *)fb_tree;
+
 @end
 
 NS_ASSUME_NONNULL_END
