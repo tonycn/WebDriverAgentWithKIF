@@ -31,14 +31,6 @@ extern NSString *const FBUnknownAttributeException;
 + (NSString *)wdAttributeNameForAttributeName:(NSString *)name;
 
 /**
- Collects all the unique element types from an array of elements.
- 
- @param elements array of elements
- @return set of unique element types (XCUIElementType items) or an empty set in case the input is empty
- */
-+ (NSSet<NSNumber *> *)uniqueElementTypesWithElements:(NSArray<id<FBElement>> *)elements;
-
-/**
  Returns mapping of all possible FBElement protocol properties aliases
  
  @return dictionary of matching property aliases with their real names as values or getter method names if exist

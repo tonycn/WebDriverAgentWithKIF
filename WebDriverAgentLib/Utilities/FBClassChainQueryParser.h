@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*! Element's position */
 @property (readonly, nonatomic) NSInteger position;
 /*! Element's type */
-@property (readonly, nonatomic) XCUIElementType type;
+@property (readonly, nonatomic) NSString *type;
 /*! Whether an element is a descendant of the previos element */
 @property (readonly, nonatomic) BOOL isDescendant;
 /*! The ordered list of matching predicates for the current element */
@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Instance constructor, which allows to set element type and position
  
- @param type on of supoported element types declared in XCUIElementType enum
+ @param type on of supoported element types
  @param position element position relative to its sibling element. Numeration
    starts with 1. Zero value means that all sibling element should be selected.
    Negative value means that numeration starts from the last element, for example
@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
    child of the previous element
  @return FBClassChainElement instance
  */
-- (instancetype)initWithType:(XCUIElementType)type position:(NSInteger)position predicates:(NSArray<FBAbstractPredicateItem *> *)predicates isDescendant:(BOOL)isDescendant;
+- (instancetype)initWithType:(NSString *)type position:(NSInteger)position predicates:(NSArray<FBAbstractPredicateItem *> *)predicates isDescendant:(BOOL)isDescendant;
 
 @end
 

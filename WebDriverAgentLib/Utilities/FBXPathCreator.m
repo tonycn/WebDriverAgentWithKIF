@@ -9,8 +9,6 @@
 
 #import "FBXPathCreator.h"
 
-#import "FBElementTypeTransformer.h"
-
 @implementation FBXPathCreator
 
 

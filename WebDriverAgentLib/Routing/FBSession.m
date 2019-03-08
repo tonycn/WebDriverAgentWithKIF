@@ -12,8 +12,8 @@
 
 #import <objc/runtime.h>
 
-#import "FBApplication.h"
 #import "FBElementCache.h"
+#import "FBApplication.h"
 #import "FBMacros.h"
 
 NSString *const FBApplicationCrashedException = @"FBApplicationCrashedException";

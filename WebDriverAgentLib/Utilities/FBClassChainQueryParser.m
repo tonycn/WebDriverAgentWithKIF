@@ -10,7 +10,6 @@
 #import "FBExceptionHandler.h"
 #import "FBClassChainQueryParser.h"
 #import "FBErrorBuilder.h"
-#import "FBElementTypeTransformer.h"
 #import "FBPredicate.h"
 #import "NSPredicate+FBFormat.h"
 #import "FBMacros.h"
@@ -395,7 +394,7 @@ static NSString *const FBAbstractMethodInvocationException = @"FBAbstractMethodI
 
 @implementation FBClassChainItem
 
-- (instancetype)initWithType:(XCUIElementType)type position:(NSInteger)position predicates:(NSArray<FBAbstractPredicateItem *> *)predicates isDescendant:(BOOL)isDescendant
+- (instancetype)initWithType:(NSString *)type position:(NSInteger)position predicates:(NSArray<FBAbstractPredicateItem *> *)predicates isDescendant:(BOOL)isDescendant
 {
   self = [super init];
   if (self) {
@@ -507,7 +506,7 @@ static NSNumberFormatter *numberFormatter = nil;
 + (nullable FBClassChain*)compiledQueryWithTokenizedQuery:(NSArray<FBBaseClassChainToken *> *)tokenizedQuery originalQuery:(NSString *)originalQuery error:(NSError **)error
 {
   NSMutableArray *result = [NSMutableArray array];
-  XCUIElementType chainElementType = XCUIElementTypeAny;
+  NSString *chainElementType = nil;
   int chainElementPosition = 1;
   BOOL isTypeSet = NO;
   BOOL isPositionSet = NO;
@@ -521,7 +520,7 @@ static NSNumberFormatter *numberFormatter = nil;
         return nil;
       }
       @try {
-        chainElementType = [FBElementTypeTransformer elementTypeWithTypeName:token.asString];
+        chainElementType = token.asString;
         isTypeSet = YES;
       } @catch (NSException *e) {
         if ([e.name isEqualToString:FBInvalidArgumentException]) {
@@ -537,7 +536,7 @@ static NSNumberFormatter *numberFormatter = nil;
         *error = [self.class compilationErrorWithQuery:originalQuery description:description];
         return nil;
       }
-      chainElementType = XCUIElementTypeAny;
+      chainElementType = nil;
       isTypeSet = YES;
     } else if ([token isKindOfClass:FBDescendantMarkerToken.class]) {
       if (isDescendantSet) {

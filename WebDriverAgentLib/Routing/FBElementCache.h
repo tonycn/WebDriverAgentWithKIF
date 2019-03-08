@@ -9,8 +9,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class XCUIElement;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FBElementCache : NSObject
@@ -21,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param element element to store
  @return element's uuid
  */
-- (NSString *)storeElement:(XCUIElement *)element;
+- (NSString *)storeElement:(UIView *)element;
 
 /**
  Returns cached element
@@ -29,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param uuid uuid of element to fetch
  @return element
  */
-- (nullable XCUIElement *)elementForUUID:(NSString *__nullable)uuid;
+- (nullable UIView *)elementForUUID:(NSString *__nullable)uuid;
 
 /**
  Clears the cache

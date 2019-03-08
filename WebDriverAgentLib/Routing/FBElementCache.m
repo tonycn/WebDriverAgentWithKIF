@@ -9,13 +9,27 @@
 
 #import "FBElementCache.h"
 
-#import "FBAlert.h"
+#import "UIView+FBHelper.h"
+
+@interface FBElementCacheItem : NSObject
+@property (nonatomic, weak) UIView *element;
+@end
 
 
+@implementation FBElementCacheItem
+- (instancetype)initWithElement:(UIView *)view
+{
+    self = [super init];
+    if (self) {
+        self.element = view;
+    }
+    return self;
+}
+@end
 
 
 @interface FBElementCache ()
-@property (atomic, strong) NSMutableDictionary *elementCache;
+@property (atomic, strong) NSMutableDictionary <NSString *, FBElementCacheItem *> *elementCache;
 @end
 
 @implementation FBElementCache
@@ -30,22 +44,20 @@
   return self;
 }
 
-- (NSString *)storeElement:(XCUIElement *)element
+- (NSString *)storeElement:(UIView *)element
 {
-  NSString *uuid = [[NSUUID UUID] UUIDString];
+  NSString *uuid = [element fb_uuid];
   self.elementCache[uuid] = element;
   return uuid;
 }
 
-- (XCUIElement *)elementForUUID:(NSString *)uuid
+- (UIView *)elementForUUID:(NSString *)uuid
 {
-//  if (!uuid) {
-//    return nil;
-//  }
-//  XCUIElement *element = self.elementCache[uuid];
-//  [element resolve];
-//  return element;
+  if (!uuid) {
     return nil;
+  }
+  UIView *element = self.elementCache[uuid];
+  return element;
 }
 
 - (void)clear

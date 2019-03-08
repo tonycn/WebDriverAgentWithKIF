@@ -14,8 +14,6 @@
     typedef NSString* FBLiteralString;
 #endif
 
-#define XCUIElementType NSInteger
-#define XCUIElementTypeAny 0
 
 /*! Returns 'value' or nil if 'value' is an empty string */
 #define FBTransferEmptyStringToNil(value) ([value isEqual:@""] ? nil : value)

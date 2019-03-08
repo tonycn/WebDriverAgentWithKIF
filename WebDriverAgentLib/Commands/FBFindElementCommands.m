@@ -9,18 +9,14 @@
 
 #import "FBFindElementCommands.h"
 
-#import "FBAlert.h"
 #import "FBConfiguration.h"
-#import "FBElementCache.h"
 #import "FBExceptionHandler.h"
 #import "FBRouteRequest.h"
 #import "FBMacros.h"
-#import "FBElementCache.h"
 #import "FBPredicate.h"
 #import "FBSession.h"
 #import "FBApplication.h"
-
-
+#import "UIView+FBHelper.h"
 
 
 static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteRequest *request)
@@ -55,7 +51,7 @@ static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteReque
 + (id<FBResponsePayload>)handleFindElement:(FBRouteRequest *)request
 {
   FBSession *session = request.session;
-  XCUIElement *element = [self.class elementUsing:request.arguments[@"using"] withValue:request.arguments[@"value"] under:session.application];
+  UIView *element = [self.class elementUsing:request.arguments[@"using"] withValue:request.arguments[@"value"] under:session.application];
   if (!element) {
     return FBNoSuchElementErrorResponseForRequest(request);
   }
@@ -101,14 +97,28 @@ static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteReque
 
 #pragma mark - Helpers
 
-+ (XCUIElement *)elementUsing:(NSString *)usingText withValue:(NSString *)value under:(XCUIElement *)element
++ (UIView *)elementUsing:(NSString *)usingText withValue:(NSString *)value under:(UIView *)element
 {
   return [[self elementsUsing:usingText withValue:value under:element shouldReturnAfterFirstMatch:YES] firstObject];
 }
 
-+ (NSArray *)elementsUsing:(NSString *)usingText withValue:(NSString *)value under:(XCUIElement *)element shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch
++ (NSArray *)elementsUsing:(NSString *)usingText withValue:(NSString *)value under:(UIView *)element shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch
 {
-  return nil;
+    NSArray *elements;
+    const BOOL partialSearch = [usingText isEqualToString:@"partial link text"];
+    if (partialSearch || [usingText isEqualToString:@"link text"]) {
+        NSArray *components = [value componentsSeparatedByString:@"="];
+        NSString *propertyValue = components.lastObject;
+        NSString *propertyName = (components.count < 2 ? @"name" : components.firstObject);
+        elements = [element fb_descendantsMatchingProperty:propertyName value:propertyValue partialSearch:partialSearch];
+    } else if ([usingText isEqualToString:@"class chain"]) {
+        elements = [element fb_descendantsMatchingClassChain:value shouldReturnAfterFirstMatch:shouldReturnAfterFirstMatch];
+    } else if ([usingText isEqualToString:@"accessibility id"]) {
+        elements = [element fb_descendantsMatchingIdentifier:value shouldReturnAfterFirstMatch:shouldReturnAfterFirstMatch];
+    } else {
+        [[NSException exceptionWithName:FBElementAttributeUnknownException reason:[NSString stringWithFormat:@"Invalid locator requested: %@", usingText] userInfo:nil] raise];
+    }
+    return elements;
 }
 
 @end

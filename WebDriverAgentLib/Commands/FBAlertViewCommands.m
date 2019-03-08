@@ -9,7 +9,6 @@
 
 #import "FBAlertViewCommands.h"
 
-#import "FBAlert.h"
 #import "FBApplication.h"
 #import "FBRouteRequest.h"
 #import "FBSession.h"
@@ -34,62 +33,22 @@
 
 + (id<FBResponsePayload>)handleAlertTextCommand:(FBRouteRequest *)request
 {
-  FBSession *session = request.session;
-  NSString *alertText = [FBAlert alertWithApplication:session.application].text;
-  if (!alertText) {
-    return FBResponseWithStatus(FBCommandStatusNoAlertPresent, nil);
-  }
-  return FBResponseWithStatus(FBCommandStatusNoError, alertText);
+  
+  return FBResponseWithOK();
+
 }
 
 + (id<FBResponsePayload>)handleAlertAcceptCommand:(FBRouteRequest *)request
 {
-  FBSession *session = request.session;
-  NSString *name = request.arguments[@"name"];
-  FBAlert *alert = [FBAlert alertWithApplication:session.application];
-  NSError *error;
-
-  if (!alert.isPresent) {
-    return FBResponseWithStatus(FBCommandStatusNoAlertPresent, nil);
-  }
-  if (name) {
-    if (![alert clickAlertButton:name error:&error]) {
-      return FBResponseWithError(error);
-    }
-  } else if (![alert acceptWithError:&error]) {
-    return FBResponseWithError(error);
-  }
   return FBResponseWithOK();
 }
 
 + (id<FBResponsePayload>)handleAlertDismissCommand:(FBRouteRequest *)request
 {
-  FBSession *session = request.session;
-  NSString *name = request.arguments[@"name"];
-  FBAlert *alert = [FBAlert alertWithApplication:session.application];
-  NSError *error;
-    
-  if (!alert.isPresent) {
-    return FBResponseWithStatus(FBCommandStatusNoAlertPresent, nil);
-  }
-  if (name) {
-    if (![alert clickAlertButton:name error:&error]) {
-      return FBResponseWithError(error);
-    }
-  } else if (![alert dismissWithError:&error]) {
-    return FBResponseWithError(error);
-  }
   return FBResponseWithOK();
 }
 
 + (id<FBResponsePayload>)handleGetAlertButtonsCommand:(FBRouteRequest *)request {
-  FBSession *session = request.session;
-  FBAlert *alert = [FBAlert alertWithApplication:session.application];
-
-  if (!alert.isPresent) {
-    return FBResponseWithStatus(FBCommandStatusNoAlertPresent, nil);
-  }
-  NSArray *labels = alert.buttonLabels;
-  return FBResponseWithStatus(FBCommandStatusNoError, labels);
+  return FBResponseWithOK();
 }
 @end

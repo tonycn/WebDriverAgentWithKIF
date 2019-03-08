@@ -9,15 +9,14 @@
 
 #import "FBResponsePayload.h"
 
-#import "FBElementCache.h"
 #import "FBResponseFilePayload.h"
 #import "FBResponseJSONPayload.h"
 #import "FBSession.h"
+#import "UIView+FBHelper.h"
+#import "FBElementCache.h"
 
 
-
-
-inline static NSDictionary *FBDictionaryResponseWithElement(XCUIElement *element, NSString *elementUUID, BOOL compact);
+inline static NSDictionary *FBDictionaryResponseWithElement(UIView *element, NSString *elementUUID, BOOL compact);
 
 id<FBResponsePayload> FBResponseWithOK()
 {
@@ -29,16 +28,16 @@ id<FBResponsePayload> FBResponseWithObject(id object)
   return FBResponseWithStatus(FBCommandStatusNoError, object);
 }
 
-id<FBResponsePayload> FBResponseWithCachedElement(XCUIElement *element, FBElementCache *elementCache, BOOL compact)
+id<FBResponsePayload> FBResponseWithCachedElement(UIView *element, FBElementCache *elementCache, BOOL compact)
 {
   NSString *elementUUID = [elementCache storeElement:element];
   return FBResponseWithStatus(FBCommandStatusNoError, FBDictionaryResponseWithElement(element, elementUUID, compact));
 }
 
-id<FBResponsePayload> FBResponseWithCachedElements(NSArray<XCUIElement *> *elements, FBElementCache *elementCache, BOOL compact)
+id<FBResponsePayload> FBResponseWithCachedElements(NSArray<UIView *> *elements, FBElementCache *elementCache, BOOL compact)
 {
   NSMutableArray *elementsResponse = [NSMutableArray array];
-  for (XCUIElement *element in elements) {
+  for (UIView *element in elements) {
     NSString *elementUUID = [elementCache storeElement:element];
     [elementsResponse addObject:FBDictionaryResponseWithElement(element, elementUUID, compact)];
   }
@@ -84,14 +83,7 @@ id<FBResponsePayload> FBResponseFileWithPath(NSString *path)
   return [[FBResponseFilePayload alloc] initWithFilePath:path];
 }
 
-inline static NSDictionary *FBDictionaryResponseWithElement(XCUIElement *element, NSString *elementUUID, BOOL compact)
+inline static NSDictionary *FBDictionaryResponseWithElement(UIView *element, NSString *elementUUID, BOOL compact)
 {
-  NSMutableDictionary *dictionary = [NSMutableDictionary new];
-//  dictionary[@"ELEMENT"] = elementUUID;
-//  if (!compact) {
-//    XCElementSnapshot *snapshot = element.fb_lastSnapshot;
-//    dictionary[@"type"] = snapshot.wdType;
-//    dictionary[@"label"] = snapshot.wdLabel ?: [NSNull null];
-//  }
-  return dictionary.copy;
+  return [UIView fb_dictionaryForView:element];
 }

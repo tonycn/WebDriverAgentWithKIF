@@ -16,7 +16,6 @@
 #import "FBRoute.h"
 #import "FBRouteRequest.h"
 #import "FBRunLoopSpinner.h"
-#import "FBElementCache.h"
 #import "FBErrorBuilder.h"
 #import "FBSession.h"
 #import "FBApplication.h"
@@ -24,7 +23,6 @@
 #import "FBMathUtils.h"
 #import "FBRuntimeUtils.h"
 #import "NSPredicate+FBFormat.h"
-#import "FBElementTypeTransformer.h"
 
 @interface FBElementCommands ()
 @end
@@ -136,34 +134,6 @@
 //
 //+ (id<FBResponsePayload>)handleSetValue:(FBRouteRequest *)request
 //{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  NSString *elementUUID = request.parameters[@"uuid"];
-//  XCUIElement *element = [elementCache elementForUUID:elementUUID];
-//  id value = request.arguments[@"value"];
-//  if (!value) {
-//    return FBResponseWithErrorFormat(@"Missing 'value' parameter");
-//  }
-//  NSString *textToType = value;
-//  if ([value isKindOfClass:[NSArray class]]) {
-//    textToType = [value componentsJoinedByString:@""];
-//  }
-//  if (element.elementType == XCUIElementTypePickerWheel) {
-//    [element adjustToPickerWheelValue:textToType];
-//    return FBResponseWithOK();
-//  }
-//  if (element.elementType == XCUIElementTypeSlider) {
-//    CGFloat sliderValue = textToType.floatValue;
-//    if (sliderValue < 0.0 || sliderValue > 1.0 ) {
-//      return FBResponseWithErrorFormat(@"Value of slider should be in 0..1 range");
-//    }
-//    [element adjustToNormalizedSliderPosition:sliderValue];
-//    return FBResponseWithOK();
-//  }
-//  NSUInteger frequency = (NSUInteger)[request.arguments[@"frequency"] longLongValue] ?: [FBConfiguration maxTypingFrequency];
-//  NSError *error = nil;
-//  if (![element fb_typeText:textToType frequency:frequency error:&error]) {
-//    return FBResponseWithError(error);
-//  }
 //  return FBResponseWithElementUUID(elementUUID);
 //}
 //
@@ -260,49 +230,6 @@
 //
 //+ (id<FBResponsePayload>)handleScroll:(FBRouteRequest *)request
 //{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//
-//  // Using presence of arguments as a way to convey control flow seems like a pretty bad idea but it's
-//  // what ios-driver did and sadly, we must copy them.
-//  NSString *const name = request.arguments[@"name"];
-//  if (name) {
-//    XCUIElement *childElement = [[[[element descendantsMatchingType:XCUIElementTypeAny] matchingIdentifier:name] allElementsBoundByIndex] lastObject];
-//    if (!childElement) {
-//      return FBResponseWithErrorFormat(@"'%@' identifier didn't match any elements", name);
-//    }
-//    return [self.class handleScrollElementToVisible:childElement withRequest:request];
-//  }
-//
-//  NSString *const direction = request.arguments[@"direction"];
-//  if (direction) {
-//    NSString *const distanceString = request.arguments[@"distance"] ?: @"1.0";
-//    CGFloat distance = (CGFloat)distanceString.doubleValue;
-//    if ([direction isEqualToString:@"up"]) {
-//      [element fb_scrollUpByNormalizedDistance:distance];
-//    } else if ([direction isEqualToString:@"down"]) {
-//      [element fb_scrollDownByNormalizedDistance:distance];
-//    } else if ([direction isEqualToString:@"left"]) {
-//      [element fb_scrollLeftByNormalizedDistance:distance];
-//    } else if ([direction isEqualToString:@"right"]) {
-//      [element fb_scrollRightByNormalizedDistance:distance];
-//    }
-//    return FBResponseWithOK();
-//  }
-//
-//  NSString *const predicateString = request.arguments[@"predicateString"];
-//  if (predicateString) {
-//    NSPredicate *formattedPredicate = [NSPredicate fb_formatSearchPredicate:[FBPredicate predicateWithFormat:predicateString]];
-//    XCUIElement *childElement = [[[[element descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:formattedPredicate] allElementsBoundByIndex] lastObject];
-//    if (!childElement) {
-//      return FBResponseWithErrorFormat(@"'%@' predicate didn't match any elements", predicateString);
-//    }
-//    return [self.class handleScrollElementToVisible:childElement withRequest:request];
-//  }
-//
-//  if (request.arguments[@"toVisible"]) {
-//    return [self.class handleScrollElementToVisible:element withRequest:request];
-//  }
 //  return FBResponseWithErrorFormat(@"Unsupported scroll type");
 //}
 //
@@ -420,31 +347,6 @@
 //
 //+ (id<FBResponsePayload>)handleWheelSelect:(FBRouteRequest *)request
 //{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  if (element.elementType != XCUIElementTypePickerWheel) {
-//    return FBResponseWithErrorFormat(@"The element is expected to be a valid Picker Wheel control. '%@' was given instead", element.wdType);
-//  }
-//  NSString* order = [request.arguments[@"order"] lowercaseString];
-//  CGFloat offset = DEFAULT_OFFSET;
-//  if (request.arguments[@"offset"]) {
-//    offset = (CGFloat)[request.arguments[@"offset"] doubleValue];
-//    if (offset <= 0.0 || offset > 0.5) {
-//      return FBResponseWithErrorFormat(@"'offset' value is expected to be in range (0.0, 0.5]. '%@' was given instead", request.arguments[@"offset"]);
-//    }
-//  }
-//  BOOL isSuccessful = false;
-//  NSError *error;
-//  if ([order isEqualToString:@"next"]) {
-//    isSuccessful = [element fb_selectNextOptionWithOffset:offset error:&error];
-//  } else if ([order isEqualToString:@"previous"]) {
-//    isSuccessful = [element fb_selectPreviousOptionWithOffset:offset error:&error];
-//  } else {
-//    return FBResponseWithErrorFormat(@"Only 'previous' and 'next' order values are supported. '%@' was given instead", request.arguments[@"order"]);
-//  }
-//  if (!isSuccessful) {
-//    return FBResponseWithError(error);
-//  }
 //  return FBResponseWithOK();
 //}
 //

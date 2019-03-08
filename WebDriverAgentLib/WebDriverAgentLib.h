@@ -15,16 +15,13 @@ FOUNDATION_EXPORT double WebDriverAgentLib_VersionNumber;
 //! Project version string for WebDriverAgentLib_.
 FOUNDATION_EXPORT const unsigned char WebDriverAgentLib_VersionString[];
 
-#import "FBAlert.h"
 #import "FBApplication.h"
 #import "FBCommandHandler.h"
 #import "FBCommandStatus.h"
 #import "FBConfiguration.h"
 #import "FBDebugLogDelegateDecorator.h"
 #import "FBElement.h"
-#import "FBElementCache.h"
 #import "FBElementHitPoint.h"
-#import "FBElementTypeTransformer.h"
 #import "FBErrorBuilder.h"
 #import "FBExceptionHandler.h"
 #import "FBKeyboard.h"

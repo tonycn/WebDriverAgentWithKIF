@@ -10,7 +10,8 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-@property (strong, nonatomic) IBOutlet UILabel *orentationLabel;
+@property (strong, nonatomic) UILabel *orentationLabel;
+@property (strong, nonatomic) UILabel *tapButton;
 @end
 
 @implementation ViewController
