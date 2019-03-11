@@ -57,4 +57,9 @@
              @"type": @"UIScreen"};
 }
 
+- (NSArray <UIView *> *)fb_windows
+{
+    return UIApplication.sharedApplication.windows;
+}
+
 @end

@@ -23,6 +23,10 @@
 #import "FBMathUtils.h"
 #import "FBRuntimeUtils.h"
 #import "NSPredicate+FBFormat.h"
+#import "UIView+FBHelper.h"
+#import "FBElementCache.h"
+
+#import "UIView-KIFAdditions.h"
 
 @interface FBElementCommands ()
 @end
@@ -43,7 +47,7 @@
 //    [[FBRoute GET:@"/element/:uuid/displayed"] respondWithTarget:self action:@selector(handleGetDisplayed:)],
 //    [[FBRoute GET:@"/element/:uuid/name"] respondWithTarget:self action:@selector(handleGetName:)],
 //    [[FBRoute POST:@"/element/:uuid/value"] respondWithTarget:self action:@selector(handleSetValue:)],
-//    [[FBRoute POST:@"/element/:uuid/click"] respondWithTarget:self action:@selector(handleClick:)],
+    [[FBRoute POST:@"/element/:uuid/click"] respondWithTarget:self action:@selector(handleClick:)],
 //    [[FBRoute POST:@"/element/:uuid/clear"] respondWithTarget:self action:@selector(handleClear:)],
 //    [[FBRoute GET:@"/element/:uuid/screenshot"] respondWithTarget:self action:@selector(handleElementScreenshot:)],
 //    [[FBRoute GET:@"/wda/element/:uuid/accessible"] respondWithTarget:self action:@selector(handleGetAccessible:)],
@@ -67,16 +71,16 @@
 }
 
 
-//#pragma mark - Commands
-//
-//+ (id<FBResponsePayload>)handleGetEnabled:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  BOOL isEnabled = element.isWDEnabled;
-//  return FBResponseWithStatus(FBCommandStatusNoError, isEnabled ? @YES : @NO);
-//}
-//
+#pragma mark - Commands
+
++ (id<FBResponsePayload>)handleGetEnabled:(FBRouteRequest *)request
+{
+  FBElementCache *elementCache = request.session.elementCache;
+  UIView *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
+  BOOL isEnabled = [element fb_checkIfEnabled];
+  return FBResponseWithStatus(FBCommandStatusNoError, isEnabled ? @YES : @NO);
+}
+
 //+ (id<FBResponsePayload>)handleGetRect:(FBRouteRequest *)request
 //{
 //  FBElementCache *elementCache = request.session.elementCache;
@@ -137,17 +141,15 @@
 //  return FBResponseWithElementUUID(elementUUID);
 //}
 //
-//+ (id<FBResponsePayload>)handleClick:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  NSString *elementUUID = request.parameters[@"uuid"];
-//  XCUIElement *element = [elementCache elementForUUID:elementUUID];
-//  NSError *error = nil;
-//  if (![element fb_tapWithError:&error]) {
-//    return FBResponseWithError(error);
-//  }
-//  return FBResponseWithElementUUID(elementUUID);
-//}
++ (id<FBResponsePayload>)handleClick:(FBRouteRequest *)request
+{
+  FBElementCache *elementCache = request.session.elementCache;
+  NSString *elementUUID = request.parameters[@"uuid"];
+  UIView *element = [elementCache elementForUUID:elementUUID];
+  NSError *error = nil;
+  [element tap];
+  return FBResponseWithElementUUID(elementUUID);
+}
 //
 //+ (id<FBResponsePayload>)handleClear:(FBRouteRequest *)request
 //{

@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)fb_tree;
 
+- (NSArray <UIView *> *)fb_windows;
+
 @end
 
 NS_ASSUME_NONNULL_END

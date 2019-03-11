@@ -25,7 +25,7 @@
   // Override point for customization after application launch.
   self.window.backgroundColor = [UIColor whiteColor];
   
-  ViewController *firstViewController = [[ViewController alloc]init];
+  ViewController *firstViewController = [[ViewController alloc] init];
   firstViewController.title = @"First View";
   firstViewController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
   UINavigationController *rootNavController = [[FBNavigationController alloc] initWithRootViewController:firstViewController];

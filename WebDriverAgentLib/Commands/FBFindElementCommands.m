@@ -51,7 +51,7 @@ static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteReque
 + (id<FBResponsePayload>)handleFindElement:(FBRouteRequest *)request
 {
   FBSession *session = request.session;
-  UIView *element = [self.class elementUsing:request.arguments[@"using"] withValue:request.arguments[@"value"] under:session.application];
+  UIView *element = [self.class elementUsing:request.arguments[@"using"] withValue:request.arguments[@"value"] under:session.application.fb_windows];
   if (!element) {
     return FBNoSuchElementErrorResponseForRequest(request);
   }
@@ -61,9 +61,17 @@ static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteReque
 + (id<FBResponsePayload>)handleFindElements:(FBRouteRequest *)request
 {
   FBSession *session = request.session;
-  NSArray *elements = [self.class elementsUsing:request.arguments[@"using"] withValue:request.arguments[@"value"] under:session.application
-                    shouldReturnAfterFirstMatch:NO];
-  return FBResponseWithCachedElements(elements, request.session.elementCache, FBConfiguration.shouldUseCompactResponses);
+  NSMutableArray *foundElements = [NSMutableArray array];
+  for (UIWindow *window in session.application.fb_windows) {
+    NSArray *elements = [self.class elementsUsing:request.arguments[@"using"]
+                                        withValue:request.arguments[@"value"]
+                                            under:window
+                      shouldReturnAfterFirstMatch:NO];
+    if (elements) {
+      [foundElements addObjectsFromArray:elements];
+    }
+  }
+  return FBResponseWithCachedElements(foundElements, request.session.elementCache, FBConfiguration.shouldUseCompactResponses);
 }
 
 + (id<FBResponsePayload>)handleFindVisibleCells:(FBRouteRequest *)request
@@ -96,6 +104,24 @@ static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteReque
 
 
 #pragma mark - Helpers
+
+
++ (UIView *)elementUsing:(NSString *)usingText
+               withValue:(NSString *)value
+           underElements:(NSArray <UIView *> *)elements
+{
+    for (UIView * view in elements) {
+        UIView *firstElement = [[self elementsUsing:usingText
+                                          withValue:value
+                                              under:view
+                        shouldReturnAfterFirstMatch:YES] firstObject];
+        if (firstElement) {
+            return firstElement;
+        }
+    }
+    return nil;
+}
+
 
 + (UIView *)elementUsing:(NSString *)usingText withValue:(NSString *)value under:(UIView *)element
 {

@@ -33,6 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)fb_uuid;
 
+- (NSString *)fb_label;
+
+- (BOOL)fb_checkIfEnabled;
+
 @end
 
 NS_ASSUME_NONNULL_END

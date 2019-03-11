@@ -21,6 +21,9 @@ static NSString *const OBJC_PROP_ATTRIBS_SEPARATOR = @",";
 + (NSString *)wdAttributeNameForAttributeName:(NSString *)name
 {
   NSAssert(name.length > 0, @"Attribute name cannot be empty", nil);
+  if ([name hasPrefix:@"fb_"]) {
+    return name;
+  }
   NSDictionary *attributeNamesMapping = [self.class wdAttributeNamesMapping];
   NSString *result = [attributeNamesMapping valueForKey:name];
   if (nil == result) {

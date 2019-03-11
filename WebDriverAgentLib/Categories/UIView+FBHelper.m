@@ -13,12 +13,23 @@
 
 + (NSDictionary *)fb_dictionaryForView:(UIView *)view
 {
+    return [self fb_dictionaryForView:view classChain:nil];
+}
+
++ (NSDictionary *)fb_dictionaryForView:(UIView *)view
+                            classChain:(NSString *)chain
+{
+    NSString *chainWithSlash = chain ?: @"";
+    if (chainWithSlash.length > 0 && ![chainWithSlash hasSuffix:@"/"]) {
+        chainWithSlash = [chainWithSlash stringByAppendingString:@"/"];
+    }
     NSMutableDictionary *info = [[NSMutableDictionary alloc] init];
     info[@"type"] = NSStringFromClass(view.class);
     info[@"name"] = nil;
     info[@"value"] = nil;
     info[@"label"] = [view fb_label];
-    info[@"path"] = nil;
+    info[@"classChain"] = [chainWithSlash stringByAppendingString:[view fb_generateElementQuery]];
+    info[@"ELEMENT"] = [view fb_uuid];
     info[@"rect"] =  [self fb_formattedRectWithFrame:view.frame];
     info[@"frame"] = NSStringFromCGRect(CGRectIntegral(view.frame));
     info[@"isEnabled"] = [@([view fb_checkIfEnabled]) stringValue];
@@ -28,11 +39,12 @@
     if ([childElements count]) {
         info[@"children"] = [[NSMutableArray alloc] init];
         for (UIView *childView in childElements) {
-            [info[@"children"] addObject:[self fb_dictionaryForView:childView]];
+            [info[@"children"] addObject:[self fb_dictionaryForView:childView classChain:info[@"classChain"]]];
         }
     }
     return info;
 }
+
 
 + (NSDictionary *)fb_formattedRectWithFrame:(CGRect)frame
 {
@@ -45,6 +57,8 @@
              };
 }
 
+#pragma mark -
+
 - (NSArray<UIView *> *)fb_descendantsMatchingProperty:(NSString *)property
                                                 value:(NSString *)value
                                         partialSearch:(BOOL)partialSearch
@@ -52,6 +66,7 @@
     return nil;
 }
 
+#pragma mark -
 - (NSArray<UIView *> *)fb_descendantsMatchingClassChain:(NSString *)classChainPath
                             shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch
 {
@@ -62,15 +77,53 @@
         return nil;
     }
     NSMutableArray<FBClassChainItem *> *lookupChain = parsedChain.elements.mutableCopy;
-    FBClassChainItem *chainItem = lookupChain.firstObject;
-    UIView *currentRoot = self;
-    
-    
-    
-    
-    return nil;
+    return [self fb_descendantsMatchingClassChain:lookupChain
+                                       chainIndex:0
+                      shouldReturnAfterFirstMatch:shouldReturnAfterFirstMatch];
 }
 
+- (NSArray<UIView *> *)fb_descendantsMatchingClassChain:(NSArray<FBClassChainItem *> *)lookupChain
+                                             chainIndex:(NSUInteger)chainIndex
+                            shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch
+{
+    if (lookupChain.count <= chainIndex) {
+        return nil;
+    }
+    FBClassChainItem *chainItem = [lookupChain objectAtIndex:chainIndex];
+    UIView *currentRoot = self;
+    BOOL matched = [currentRoot fb_matchClassChainItem:chainItem];
+    if (chainIndex + 1 == lookupChain.count) {
+        return matched ? @[currentRoot] : nil;
+    }
+    NSMutableArray *elementsFound = [NSMutableArray array];
+    for (UIView *subView in currentRoot.subviews) {
+        if (matched) {
+            NSArray *elements = [subView fb_descendantsMatchingClassChain:lookupChain
+                                                               chainIndex:chainIndex+1
+                                              shouldReturnAfterFirstMatch:shouldReturnAfterFirstMatch];
+            if (elements.count > 0 && shouldReturnAfterFirstMatch) {
+                return elements;
+            } else if (elements.count > 0) {
+                [elementsFound addObjectsFromArray:elements];
+            }
+        }
+        
+        if (chainItem.isDescendant) {
+            NSArray *elements = [subView fb_descendantsMatchingClassChain:lookupChain
+                                                               chainIndex:chainIndex
+                                              shouldReturnAfterFirstMatch:shouldReturnAfterFirstMatch];
+            if (elements.count > 0 && shouldReturnAfterFirstMatch) {
+                return elements;
+            } else if (elements.count > 0) {
+                [elementsFound addObjectsFromArray:elements];
+            }
+        }
+    }
+
+    return elementsFound;
+}
+
+#pragma mark -
 - (NSArray<UIView *> *)fb_descendantsMatchingIdentifier:(NSString *)viewIdentifier
                             shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch
 {
@@ -78,9 +131,11 @@
     return nil;
 }
 
-- (BOOL)matchClassChainItem:(FBClassChainItem *)classChainItem
+- (BOOL)fb_matchClassChainItem:(FBClassChainItem *)classChainItem
 {
-    
+    return classChainItem.position == 0
+    || classChainItem.position == self.fb_position
+    || classChainItem.position == self.fb_minusPosition;
 }
 
 #pragma mark - Element Query
@@ -90,7 +145,7 @@
     NSMutableString *elementQuery = [[NSMutableString alloc] init];
     [elementQuery appendString:NSStringFromClass(self.class)];
     if (self.fb_label.length > 0) {
-        [elementQuery appendFormat:@"[label=%@]", self.fb_label];
+        [elementQuery appendFormat:@"[`fb_label == '%@'`]", self.fb_label];
     }
     [elementQuery appendFormat:@"[%@]", @(self.fb_position)];
     return elementQuery;
@@ -136,7 +191,12 @@
 
 - (NSInteger)fb_position
 {
-    return [self.superview.subviews indexOfObject:self];
+    return [self.superview.subviews indexOfObject:self] + 1;
+}
+
+- (NSInteger)fb_minusPosition
+{
+    return self.superview.subviews.count - self.fb_position - 1;
 }
 
 - (NSString *)fb_label
