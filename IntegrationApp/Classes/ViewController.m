@@ -26,7 +26,6 @@
   
   
   self.button = [UIButton buttonWithType:UIButtonTypeCustom];
-  [self.button setTitle:@"Pop" forState:UIControlStateNormal];
   [self.button setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
   [self.button addTarget:self action:@selector(buttonDidTap:) forControlEvents:UIControlEventTouchUpInside];
   [self.view addSubview:self.button];
@@ -46,18 +45,20 @@
   
   self.label.frame = CGRectMake(0, 0, 240, 80);
   self.label.center = self.view.center;
-  [self updatelabel];
+  [self updateText];
   
   self.button.frame = CGRectMake(0, 0, 240, 80);
   self.button.center = CGPointMake(self.view.center.x, self.view.center.y + 100);
 }
 
-- (void)updatelabel
+- (void)updateText
 {
-  self.label.text = @"Push";
+  self.label.text = [NSString stringWithFormat:@"Push %@", @(self.navigationController.childViewControllers.count)];
   UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(labelDidTap:)];
   [self.label addGestureRecognizer:tapGesture];
   self.label.userInteractionEnabled = YES;
+  
+  [self.button setTitle:[NSString stringWithFormat:@"Pop %@", @(self.navigationController.childViewControllers.count)] forState:UIControlStateNormal];
 }
 
 - (void)labelDidTap:(UITapGestureRecognizer *)tapGesture
@@ -66,7 +67,9 @@
 //  self.label.text = [@"tap" stringByAppendingString:[@(count) stringValue]];
 //  ++count;
   
-  [self.navigationController pushViewController:[[UIViewController alloc] init] animated:YES];
+  ViewController *vc = [[ViewController alloc] init];
+  vc.title = [NSString stringWithFormat:@"demo %@", @(self.navigationController.childViewControllers.count)];
+  [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)buttonDidTap:(UIButton *)btn

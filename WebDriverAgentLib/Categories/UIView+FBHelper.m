@@ -133,9 +133,20 @@
 
 - (BOOL)fb_matchClassChainItem:(FBClassChainItem *)classChainItem
 {
-    return classChainItem.position == 0
-    || classChainItem.position == self.fb_position
-    || classChainItem.position == self.fb_minusPosition;
+    if (!(classChainItem.position == 0
+        || classChainItem.position == self.fb_position
+        || classChainItem.position == self.fb_minusPosition)) {
+        return NO;
+    }
+
+    if (classChainItem.predicates) {
+        for (FBSelfPredicateItem *predicate in classChainItem.predicates) {
+            if (![predicate.value evaluateWithObject:self]) {
+                return NO;
+            }
+        }
+    }
+    return YES;
 }
 
 #pragma mark - Element Query
