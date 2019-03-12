@@ -18,6 +18,9 @@
 #import "FBRouteRequest.h"
 #import "FBRunLoopSpinner.h"
 #import "FBSession.h"
+#import "KIFTypist.h"
+#import "UIWindow-KIFAdditions.h"
+#import "FBElementCache.h"
 
 @implementation FBCustomCommands
 
@@ -55,16 +58,21 @@
 
 + (id<FBResponsePayload>)handleDismissKeyboardCommand:(FBRouteRequest *)request
 {
+  [request.session.application fb_dismissKeyboard];
   return FBResponseWithOK();
 }
 
 + (id<FBResponsePayload>)handleGetElementCacheSizeCommand:(FBRouteRequest *)request
 {
-    return nil;
+  NSNumber *count = [NSNumber numberWithUnsignedInteger:[request.session.elementCache count]];
+  return FBResponseWithObject(count);
 }
 
 + (id<FBResponsePayload>)handleClearElementCacheCommand:(FBRouteRequest *)request
 {
+  
+  FBElementCache *elementCache = request.session.elementCache;
+  [elementCache clear];
   return FBResponseWithOK();
 }
 @end

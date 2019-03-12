@@ -35,7 +35,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)fb_label;
 
+- (NSDictionary *)wdRect;
+
 - (BOOL)fb_checkIfEnabled;
+
+- (BOOL)fb_clearTextWithError:(NSError **)error;
 
 @end
 

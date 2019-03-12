@@ -13,6 +13,7 @@
 #import "FBMacros.h"
 #import "UIApplication-KIFAdditions.h"
 #import "UIView+FBHelper.h"
+#import "UIWindow-KIFAdditions.h"
 
 @interface FBApplication ()
 @property (nonatomic, assign) BOOL fb_isObservingAppImplCurrentProcess;
@@ -65,6 +66,15 @@
 - (UIWindow *)fb_keyWindow
 {
     return UIApplication.sharedApplication.keyWindow;
+}
+
+- (void)fb_dismissKeyboard
+{
+  for (UIWindow *window in self.fb_windows) {
+    if ([window.firstResponder canResignFirstResponder]) {
+      [window.firstResponder resignFirstResponder];
+    }
+  }
 }
 
 - (CGRect)wdFrame
