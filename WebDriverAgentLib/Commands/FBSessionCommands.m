@@ -121,9 +121,6 @@
 
 + (id<FBResponsePayload>)handleGetHealthCheck:(FBRouteRequest *)request
 {
-//  if (![[XCUIDevice sharedDevice] fb_healthCheckWithApplication:[FBApplication fb_activeApplication]]) {
-//    return FBResponseWithErrorFormat(@"Health check failed");
-//  }
   return FBResponseWithOK();
 }
 

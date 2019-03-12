@@ -17,7 +17,7 @@
 #import "FBSession.h"
 #import "FBApplication.h"
 #import "UIView+FBHelper.h"
-
+#import "FBElementCache.h"
 
 static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteRequest *request)
 {
@@ -44,7 +44,6 @@ static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteReque
     [[FBRoute GET:@"/wda/element/:uuid/getVisibleCells"] respondWithTarget:self action:@selector(handleFindVisibleCells:)],
   ];
 }
-
 
 #pragma mark - Commands
 
@@ -81,31 +80,30 @@ static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteReque
 
 + (id<FBResponsePayload>)handleFindSubElement:(FBRouteRequest *)request
 {
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  XCUIElement *foundElement = [self.class elementUsing:request.arguments[@"using"] withValue:request.arguments[@"value"] under:element];
-//  if (!foundElement) {
-//    return FBNoSuchElementErrorResponseForRequest(request);
-//  }
-//  return FBResponseWithCachedElement(foundElement, request.session.elementCache, FBConfiguration.shouldUseCompactResponses);
-    return nil;
+    FBSession *session = request.session;
+    FBElementCache *elementCache = request.session.elementCache;
+    UIView *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
+    UIView *foundElement = [self.class elementUsing:request.arguments[@"using"]
+                                          withValue:request.arguments[@"value"]
+                                              under:element];
+    return FBResponseWithCachedElement(foundElement, request.session.elementCache, FBConfiguration.shouldUseCompactResponses);
 }
 
 + (id<FBResponsePayload>)handleFindSubElements:(FBRouteRequest *)request
 {
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  NSArray *foundElements = [self.class elementsUsing:request.arguments[@"using"] withValue:request.arguments[@"value"] under:element
-//                         shouldReturnAfterFirstMatch:NO];
-//
-//  return FBResponseWithCachedElements(foundElements, request.session.elementCache, FBConfiguration.shouldUseCompactResponses);
-    return nil;
+    FBSession *session = request.session;
+    FBElementCache *elementCache = request.session.elementCache;
+    UIView *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
+    NSArray <UIView *> * foundElements = [self.class
+                                          elementsUsing:request.arguments[@"using"]
+                                          withValue:request.arguments[@"value"]
+                                          under:element
+                                          shouldReturnAfterFirstMatch:NO];
+    return FBResponseWithCachedElements(foundElements, request.session.elementCache, FBConfiguration.shouldUseCompactResponses);
 }
 
 
 #pragma mark - Helpers
-
-
 + (UIView *)elementUsing:(NSString *)usingText
                withValue:(NSString *)value
            underElements:(NSArray <UIView *> *)elements

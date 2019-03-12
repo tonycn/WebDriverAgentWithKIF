@@ -31,7 +31,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)fb_tree;
 
-- (NSArray <UIView *> *)fb_windows;
+- (NSArray <UIWindow *> *)fb_windows;
+
+- (UIWindow *)fb_keyWindow;
+
+- (CGRect)wdFrame;
+
+- (UIInterfaceOrientation)interfaceOrientation;
 
 @end
 

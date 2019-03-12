@@ -39,7 +39,7 @@
 {
   return
   @[
-//    [[FBRoute GET:@"/window/size"] respondWithTarget:self action:@selector(handleGetWindowSize:)],
+    [[FBRoute GET:@"/window/size"] respondWithTarget:self action:@selector(handleGetWindowSize:)],
 //    [[FBRoute GET:@"/element/:uuid/enabled"] respondWithTarget:self action:@selector(handleGetEnabled:)],
 //    [[FBRoute GET:@"/element/:uuid/rect"] respondWithTarget:self action:@selector(handleGetRect:)],
 //    [[FBRoute GET:@"/element/:uuid/attribute/:name"] respondWithTarget:self action:@selector(handleGetAttribute:)],
@@ -57,9 +57,9 @@
 //    [[FBRoute POST:@"/wda/element/:uuid/doubleTap"] respondWithTarget:self action:@selector(handleDoubleTap:)],
 //    [[FBRoute POST:@"/wda/element/:uuid/twoFingerTap"] respondWithTarget:self action:@selector(handleTwoFingerTap:)],
 //    [[FBRoute POST:@"/wda/element/:uuid/touchAndHold"] respondWithTarget:self action:@selector(handleTouchAndHold:)],
-//    [[FBRoute POST:@"/wda/element/:uuid/scroll"] respondWithTarget:self action:@selector(handleScroll:)],
+    [[FBRoute POST:@"/wda/element/:uuid/scroll"] respondWithTarget:self action:@selector(handleScroll:)],
 //    [[FBRoute POST:@"/wda/element/:uuid/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDrag:)],
-//    [[FBRoute POST:@"/wda/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDragCoordinate:)],
+    [[FBRoute POST:@"/wda/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDragCoordinate:)],
 //    [[FBRoute POST:@"/wda/tap/:uuid"] respondWithTarget:self action:@selector(handleTap:)],
 //    [[FBRoute POST:@"/wda/touchAndHold"] respondWithTarget:self action:@selector(handleTouchAndHoldCoordinate:)],
 //    [[FBRoute POST:@"/wda/doubleTap"] respondWithTarget:self action:@selector(handleDoubleTapCoordinate:)],
@@ -230,23 +230,22 @@
 //  return FBResponseWithOK();
 //}
 //
-//+ (id<FBResponsePayload>)handleScroll:(FBRouteRequest *)request
-//{
-//  return FBResponseWithErrorFormat(@"Unsupported scroll type");
-//}
-//
-//+ (id<FBResponsePayload>)handleDragCoordinate:(FBRouteRequest *)request
-//{
-//  FBSession *session = request.session;
-//  CGPoint startPoint = CGPointMake((CGFloat)[request.arguments[@"fromX"] doubleValue], (CGFloat)[request.arguments[@"fromY"] doubleValue]);
-//  CGPoint endPoint = CGPointMake((CGFloat)[request.arguments[@"toX"] doubleValue], (CGFloat)[request.arguments[@"toY"] doubleValue]);
-//  NSTimeInterval duration = [request.arguments[@"duration"] doubleValue];
-//  XCUICoordinate *endCoordinate = [self.class gestureCoordinateWithCoordinate:endPoint application:session.application shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
-//  XCUICoordinate *startCoordinate = [self.class gestureCoordinateWithCoordinate:startPoint application:session.application shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
-//  [startCoordinate pressForDuration:duration thenDragToCoordinate:endCoordinate];
-//  return FBResponseWithOK();
-//}
-//
++ (id<FBResponsePayload>)handleScroll:(FBRouteRequest *)request
+{
+  return FBResponseWithErrorFormat(@"Unsupported scroll type");
+}
+
++ (id<FBResponsePayload>)handleDragCoordinate:(FBRouteRequest *)request
+{
+  FBSession *session = request.session;
+  CGPoint startPoint = CGPointMake((CGFloat)[request.arguments[@"fromX"] doubleValue], (CGFloat)[request.arguments[@"fromY"] doubleValue]);
+  CGPoint endPoint = CGPointMake((CGFloat)[request.arguments[@"toX"] doubleValue], (CGFloat)[request.arguments[@"toY"] doubleValue]);
+  NSTimeInterval duration = [request.arguments[@"duration"] doubleValue];
+  
+  [request.session.application.fb_keyWindow dragFromPoint:startPoint toPoint:endPoint];
+  return FBResponseWithOK();
+}
+
 //+ (id<FBResponsePayload>)handleDrag:(FBRouteRequest *)request
 //{
 //  FBSession *session = request.session;
@@ -322,15 +321,15 @@
 //  return FBResponseWithOK();
 //}
 //
-//+ (id<FBResponsePayload>)handleGetWindowSize:(FBRouteRequest *)request
-//{
-//  CGRect frame = request.session.application.wdFrame;
-//  CGSize screenSize = FBAdjustDimensionsForApplication(frame.size, request.session.application.interfaceOrientation);
-//  return FBResponseWithStatus(FBCommandStatusNoError, @{
-//    @"width": @(screenSize.width),
-//    @"height": @(screenSize.height),
-//  });
-//}
++ (id<FBResponsePayload>)handleGetWindowSize:(FBRouteRequest *)request
+{
+  CGRect frame = request.session.application.wdFrame;
+  CGSize screenSize = FBAdjustDimensionsForApplication(frame.size, request.session.application.interfaceOrientation);
+  return FBResponseWithStatus(FBCommandStatusNoError, @{
+    @"width": @(screenSize.width),
+    @"height": @(screenSize.height),
+  });
+}
 //
 //+ (id<FBResponsePayload>)handleElementScreenshot:(FBRouteRequest *)request
 //{

@@ -57,9 +57,24 @@
              @"type": @"UIScreen"};
 }
 
-- (NSArray <UIView *> *)fb_windows
+- (NSArray <UIWindow *> *)fb_windows
 {
     return UIApplication.sharedApplication.windows;
+}
+
+- (UIWindow *)fb_keyWindow
+{
+    return UIApplication.sharedApplication.keyWindow;
+}
+
+- (CGRect)wdFrame
+{
+    return [UIScreen.mainScreen bounds];
+}
+
+- (UIInterfaceOrientation)interfaceOrientation
+{
+    return UIApplication.sharedApplication.statusBarOrientation;
 }
 
 @end
