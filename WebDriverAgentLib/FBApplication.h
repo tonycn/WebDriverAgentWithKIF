@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray <UIWindow *> *)fb_windows;
 
+- (NSArray <UIWindow *> *)fb_reversedWindows;
+
 - (UIWindow *)fb_keyWindow;
 
 - (void)fb_dismissKeyboard;

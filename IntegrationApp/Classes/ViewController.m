@@ -10,6 +10,7 @@
 #import "ViewController.h"
 
 @interface ViewController ()
+@property (strong, nonatomic) UITextField *text;
 @property (strong, nonatomic) UILabel *label;
 @property (strong, nonatomic) UIButton *button;
 @end
@@ -20,10 +21,13 @@
   [super viewDidLoad];
   self.view.backgroundColor = [UIColor whiteColor];
   
+  self.text = [[UITextField alloc] init];
+  self.text.borderStyle = UITextBorderStyleLine;
+  [self.view addSubview:self.text];
+  
   self.label = [[UILabel alloc] init];
   self.label.textAlignment = NSTextAlignmentCenter;
   [self.view addSubview:self.label];
-  
   
   self.button = [UIButton buttonWithType:UIButtonTypeCustom];
   [self.button setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
@@ -43,12 +47,16 @@
 {
   [super viewDidLayoutSubviews];
   
+  self.text.frame = CGRectMake(0, 0, 240, 80);
+  self.text.center = CGPointMake(self.view.center.x, self.view.center.y - 100);
+
   self.label.frame = CGRectMake(0, 0, 240, 80);
   self.label.center = self.view.center;
-  [self updateText];
   
   self.button.frame = CGRectMake(0, 0, 240, 80);
   self.button.center = CGPointMake(self.view.center.x, self.view.center.y + 100);
+  
+  [self updateText];
 }
 
 - (void)updateText

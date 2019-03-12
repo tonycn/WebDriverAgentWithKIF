@@ -63,6 +63,13 @@
     return UIApplication.sharedApplication.windows;
 }
 
+- (NSArray <UIWindow *> *)fb_reversedWindows
+{
+  return [UIApplication.sharedApplication.windows sortedArrayUsingComparator:^NSComparisonResult(UIWindow *  _Nonnull obj1, UIWindow *  _Nonnull obj2) {
+    return [@(obj2.windowLevel) compare:@(obj1.windowLevel)];
+  }];
+}
+
 - (UIWindow *)fb_keyWindow
 {
     return UIApplication.sharedApplication.keyWindow;

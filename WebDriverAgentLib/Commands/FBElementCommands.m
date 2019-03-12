@@ -279,7 +279,14 @@
   CGPoint tapPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue], (CGFloat)[request.arguments[@"y"] doubleValue]);
   UIView *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
   if (nil == element) {
-    [request.session.application.fb_keyWindow tapAtPoint:tapPoint];
+    for (UIWindow *window in request.session.application.fb_reversedWindows) {
+      UIView * view = [window hitTest:tapPoint withEvent:nil];
+      if (view) {
+        CGPoint convertedPoint = [window convertPoint:tapPoint toView:view];
+        [view tapAtPoint:convertedPoint];
+        break;
+      }
+    }
   } else {
     [element tapAtPoint:tapPoint];
   }
