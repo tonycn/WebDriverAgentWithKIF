@@ -35,6 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)fb_label;
 
+// window frame
+- (CGRect)wdFrame;
+
+// window frame rect dictionary
 - (NSDictionary *)wdRect;
 
 - (BOOL)fb_checkIfEnabled;

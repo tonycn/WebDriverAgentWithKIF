@@ -32,8 +32,8 @@
   info[@"label"] = [view fb_label];
   info[@"classChain"] = [chainWithSlash stringByAppendingString:[view fb_generateElementQuery]];
   info[@"ELEMENT"] = [view fb_uuid];
-  info[@"rect"] =  [self fb_formattedRectWithFrame:view.frame];
-  info[@"frame"] = NSStringFromCGRect(CGRectIntegral(view.frame));
+  info[@"rect"] =  [self fb_formattedRectWithFrame:view.wdFrame];
+  info[@"frame"] = NSStringFromCGRect(CGRectIntegral(view.wdFrame));
   info[@"isEnabled"] = [@([view fb_checkIfEnabled]) stringValue];
   info[@"isVisible"] = [@(![view isHidden]) stringValue];
   
@@ -182,26 +182,6 @@
 
 #pragma mark - NSPredict property list
 
-- (CGFloat)fb_x
-{
-  return self.frame.origin.x;
-}
-
-- (CGFloat)fb_y
-{
-  return self.frame.origin.y;
-}
-
-- (CGFloat)fb_w
-{
-  return self.frame.size.width;
-}
-
-- (CGFloat)fb_h
-{
-  return self.frame.size.height;
-}
-
 - (NSInteger)fb_position
 {
   return [self.superview.subviews indexOfObject:self] + 1;
@@ -236,10 +216,15 @@
   }
 }
 
+- (CGRect)wdFrame
+{
+  CGRect windowFrame = [self.window convertRect:self.bounds fromView:self];
+  return windowFrame;
+}
 
 - (NSDictionary *)wdRect
 {
-  CGRect frame = self.frame;
+  CGRect frame = self.wdFrame;
   return @{
            @"x": @(CGRectGetMinX(frame)),
            @"y": @(CGRectGetMinY(frame)),

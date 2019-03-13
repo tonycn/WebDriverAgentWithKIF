@@ -58,6 +58,7 @@ class TreeNode {
       value: node.value,
       label: node.label,
       rect: node.frame,
+      classChain: node.classChain,
       isEnabled: node.isEnabled,
       isVisible: node.isVisible,
     };

@@ -49,6 +49,7 @@ class Inspector extends React.Component {
     return (
       <div>
         {this.renderField('Class', attributes.type)}
+        {this.renderField('Class Chain', attributes.classChain)}
         {this.renderField('Raw identifier', attributes.rawIdentifier)}
         {this.renderField('Name', attributes.name)}
         {this.renderField('Value', attributes.value)}
@@ -90,8 +91,8 @@ class Inspector extends React.Component {
         HTTP.post(
           'session/' + session_id + '/elements',
           JSON.stringify({
-            'using': 'link text',
-            'value': 'label=' + node.attributes.label,
+            'using': 'class chain',
+            'value': node.attributes.classChain,
           }),
           (elements_result) => {
             var elements = elements_result.value;
