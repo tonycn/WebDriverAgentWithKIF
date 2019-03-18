@@ -41,33 +41,17 @@
   return
   @[
     [[FBRoute GET:@"/window/size"] respondWithTarget:self action:@selector(handleGetWindowSize:)],
-//    [[FBRoute GET:@"/element/:uuid/enabled"] respondWithTarget:self action:@selector(handleGetEnabled:)],
     [[FBRoute GET:@"/element/:uuid/rect"] respondWithTarget:self action:@selector(handleGetRect:)],
-//    [[FBRoute GET:@"/element/:uuid/attribute/:name"] respondWithTarget:self action:@selector(handleGetAttribute:)],
-//    [[FBRoute GET:@"/element/:uuid/text"] respondWithTarget:self action:@selector(handleGetText:)],
-//    [[FBRoute GET:@"/element/:uuid/displayed"] respondWithTarget:self action:@selector(handleGetDisplayed:)],
-//    [[FBRoute GET:@"/element/:uuid/name"] respondWithTarget:self action:@selector(handleGetName:)],
-//    [[FBRoute POST:@"/element/:uuid/value"] respondWithTarget:self action:@selector(handleSetValue:)],
     [[FBRoute POST:@"/element/:uuid/click"] respondWithTarget:self action:@selector(handleClick:)],
     [[FBRoute POST:@"/element/:uuid/clear"] respondWithTarget:self action:@selector(handleClear:)],
     [[FBRoute GET:@"/element/:uuid/screenshot"] respondWithTarget:self action:@selector(handleElementScreenshot:)],
-//    [[FBRoute GET:@"/wda/element/:uuid/accessible"] respondWithTarget:self action:@selector(handleGetAccessible:)],
-//    [[FBRoute GET:@"/wda/element/:uuid/accessibilityContainer"] respondWithTarget:self action:@selector(handleGetIsAccessibilityContainer:)],
-//    [[FBRoute POST:@"/wda/element/:uuid/swipe"] respondWithTarget:self action:@selector(handleSwipe:)],
-//    [[FBRoute POST:@"/wda/element/:uuid/pinch"] respondWithTarget:self action:@selector(handlePinch:)],
-//    [[FBRoute POST:@"/wda/element/:uuid/doubleTap"] respondWithTarget:self action:@selector(handleDoubleTap:)],
-//    [[FBRoute POST:@"/wda/element/:uuid/twoFingerTap"] respondWithTarget:self action:@selector(handleTwoFingerTap:)],
-//    [[FBRoute POST:@"/wda/element/:uuid/touchAndHold"] respondWithTarget:self action:@selector(handleTouchAndHold:)],
     [[FBRoute POST:@"/wda/element/:uuid/scroll"] respondWithTarget:self action:@selector(handleScroll:)],
     [[FBRoute POST:@"/wda/element/:uuid/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDrag:)],
     [[FBRoute POST:@"/wda/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDragCoordinate:)],
     [[FBRoute POST:@"/wda/tap/:uuid"] respondWithTarget:self action:@selector(handleTap:)],
-//    [[FBRoute POST:@"/wda/touchAndHold"] respondWithTarget:self action:@selector(handleTouchAndHoldCoordinate:)],
-//    [[FBRoute POST:@"/wda/doubleTap"] respondWithTarget:self action:@selector(handleDoubleTapCoordinate:)],
+    [[FBRoute POST:@"/wda/action/:uuid"] respondWithTarget:self action:@selector(handleAction:)],
+    [[FBRoute POST:@"/wda/script"] respondWithTarget:self action:@selector(handleScript:)],
     [[FBRoute POST:@"/wda/keys"] respondWithTarget:self action:@selector(handleKeys:)],
-//    [[FBRoute POST:@"/wda/pickerwheel/:uuid/select"] respondWithTarget:self action:@selector(handleWheelSelect:)],
-//    [[FBRoute POST:@"/wda/element/forceTouch/:uuid"] respondWithTarget:self action:@selector(handleForceTouch:)],
-//    [[FBRoute POST:@"/wda/element/forceTouchByCoordinate/:uuid"] respondWithTarget:self action:@selector(handleForceTouchByCoordinateOnElement:)]
   ];
 }
 
@@ -89,59 +73,6 @@
   return FBResponseWithStatus(FBCommandStatusNoError, element.wdRect);
 }
 
-//+ (id<FBResponsePayload>)handleGetAttribute:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  id attributeValue = [element fb_valueForWDAttributeName:request.parameters[@"name"]];
-//  attributeValue = attributeValue ?: [NSNull null];
-//  return FBResponseWithStatus(FBCommandStatusNoError, attributeValue);
-//}
-//
-//+ (id<FBResponsePayload>)handleGetText:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  id text = FBFirstNonEmptyValue(element.wdValue, element.wdLabel);
-//  text = text ?: [NSNull null];
-//  return FBResponseWithStatus(FBCommandStatusNoError, text);
-//}
-//
-//+ (id<FBResponsePayload>)handleGetDisplayed:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  BOOL isVisible = element.isWDVisible;
-//  return FBResponseWithStatus(FBCommandStatusNoError, isVisible ? @YES : @NO);
-//}
-//
-//+ (id<FBResponsePayload>)handleGetAccessible:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  return FBResponseWithStatus(FBCommandStatusNoError, @(element.isWDAccessible));
-//}
-//
-//+ (id<FBResponsePayload>)handleGetIsAccessibilityContainer:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  return FBResponseWithStatus(FBCommandStatusNoError, @(element.isWDAccessibilityContainer));
-//}
-//
-//+ (id<FBResponsePayload>)handleGetName:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  id type = [element wdType];
-//  return FBResponseWithStatus(FBCommandStatusNoError, type);
-//}
-//
-//+ (id<FBResponsePayload>)handleSetValue:(FBRouteRequest *)request
-//{
-//  return FBResponseWithElementUUID(elementUUID);
-//}
-//
 + (id<FBResponsePayload>)handleClick:(FBRouteRequest *)request
 {
   FBElementCache *elementCache = request.session.elementCache;
@@ -175,65 +106,6 @@
   return FBResponseWithOK();
 }
 
-//+ (id<FBResponsePayload>)handleDoubleTapCoordinate:(FBRouteRequest *)request
-//{
-//  CGPoint doubleTapPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue], (CGFloat)[request.arguments[@"y"] doubleValue]);
-//  XCUICoordinate *doubleTapCoordinate = [self.class gestureCoordinateWithCoordinate:doubleTapPoint application:request.session.application shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
-//  [doubleTapCoordinate doubleTap];
-//  return FBResponseWithOK();
-//}
-//
-//+ (id<FBResponsePayload>)handleTwoFingerTap:(FBRouteRequest *)request
-//{
-//    FBElementCache *elementCache = request.session.elementCache;
-//    XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//    [element twoFingerTap];
-//    return FBResponseWithOK();
-//}
-//
-//+ (id<FBResponsePayload>)handleTouchAndHold:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  [element pressForDuration:[request.arguments[@"duration"] doubleValue]];
-//  return FBResponseWithOK();
-//}
-//
-//+ (id<FBResponsePayload>)handleTouchAndHoldCoordinate:(FBRouteRequest *)request
-//{
-//  CGPoint touchPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue], (CGFloat)[request.arguments[@"y"] doubleValue]);
-//  XCUICoordinate *pressCoordinate = [self.class gestureCoordinateWithCoordinate:touchPoint application:request.session.application shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
-//  [pressCoordinate pressForDuration:[request.arguments[@"duration"] doubleValue]];
-//  return FBResponseWithOK();
-//}
-//
-//+ (id<FBResponsePayload>)handleForceTouch:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  double pressure = [request.arguments[@"pressure"] doubleValue];
-//  double duration = [request.arguments[@"duration"] doubleValue];
-//  NSError *error = nil;
-//  if (![element fb_forceTouchWithPressure:pressure duration:duration error:&error]) {
-//    return FBResponseWithError(error);
-//  }
-//  return FBResponseWithOK();
-//}
-//
-//+ (id<FBResponsePayload>)handleForceTouchByCoordinateOnElement:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  double pressure = [request.arguments[@"pressure"] doubleValue];
-//  double duration = [request.arguments[@"duration"] doubleValue];
-//  CGPoint forceTouchPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue], (CGFloat)[request.arguments[@"y"] doubleValue]);
-//  NSError *error = nil;
-//  if (![element fb_forceTouchCoordinate:forceTouchPoint pressure:pressure duration:duration error:&error]) {
-//    return FBResponseWithError(error);
-//  }
-//  return FBResponseWithOK();
-//}
-//
 + (id<FBResponsePayload>)handleScroll:(FBRouteRequest *)request
 {
   return FBResponseWithErrorFormat(@"Unsupported scroll type");
@@ -293,16 +165,21 @@
   return FBResponseWithOK();
 }
 
-//+ (id<FBResponsePayload>)handlePinch:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  CGFloat scale = (CGFloat)[request.arguments[@"scale"] doubleValue];
-//  CGFloat velocity = (CGFloat)[request.arguments[@"velocity"] doubleValue];
-//  [element pinchWithScale:scale velocity:velocity];
-//  return FBResponseWithOK();
-//}
-//
++ (id<FBResponsePayload>)handleAction:(FBRouteRequest *)request
+{
+  return FBResponseWithOK();
+}
+
++ (id<FBResponsePayload>)handleScript:(FBRouteRequest *)request
+{
+  
+  NSString *scriptContext = request.arguments[@"context"];
+  NSArray <NSString *> *lines = [scriptContext componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+  
+  
+  return FBResponseWithOK();
+}
+
 + (id<FBResponsePayload>)handleKeys:(FBRouteRequest *)request
 {
   NSString *textToType = [request.arguments[@"value"] componentsJoinedByString:@""];
@@ -320,97 +197,5 @@
     @"height": @(screenSize.height),
   });
 }
-//
-//+ (id<FBResponsePayload>)handleElementScreenshot:(FBRouteRequest *)request
-//{
-//  FBElementCache *elementCache = request.session.elementCache;
-//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-//  NSError *error;
-//  NSData *screenshotData = [element fb_screenshotWithError:&error];
-//  if (nil == screenshotData) {
-//    return FBResponseWithError(error);
-//  }
-//  NSString *screenshot = [screenshotData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-//  return FBResponseWithObject(screenshot);
-//}
-//
-//static const CGFloat DEFAULT_OFFSET = (CGFloat)0.2;
-//
-//+ (id<FBResponsePayload>)handleWheelSelect:(FBRouteRequest *)request
-//{
-//  return FBResponseWithOK();
-//}
-//
-//#pragma mark - Helpers
-//
-//+ (id<FBResponsePayload>)handleScrollElementToVisible:(XCUIElement *)element withRequest:(FBRouteRequest *)request
-//{
-//  NSError *error;
-//  if (!element.exists) {
-//    return FBResponseWithErrorFormat(@"Can't scroll to element that does not exist");
-//  }
-//  if (![element fb_scrollToVisibleWithError:&error]) {
-//    return FBResponseWithError(error);
-//  }
-//  return FBResponseWithOK();
-//}
-//
-///**
-// Returns gesture coordinate for the application based on absolute coordinate
-//
-// @param coordinate absolute screen coordinates
-// @param application the instance of current application under test
-// @shouldApplyOrientationWorkaround whether to apply orientation workaround. This is to
-// handle XCTest bug where it does not translate screen coordinates for elements if
-// screen orientation is different from the default one (which is portrait).
-// Different iOS version have different behavior, for example iOS 9.3 returns correct
-// coordinates for elements in landscape, but iOS 10.0+ returns inverted coordinates as if
-// the current screen orientation would be portrait.
-// @return translated gesture coordinates ready to be passed to XCUICoordinate methods
-// */
-//+ (XCUICoordinate *)gestureCoordinateWithCoordinate:(CGPoint)coordinate application:(XCUIApplication *)application shouldApplyOrientationWorkaround:(BOOL)shouldApplyOrientationWorkaround
-//{
-//  CGPoint point = coordinate;
-//  if (shouldApplyOrientationWorkaround) {
-//    point = FBInvertPointForApplication(coordinate, application.frame.size, application.interfaceOrientation);
-//  }
-//
-//  /**
-//   If SDK >= 11, the tap coordinate based on application is not correct when
-//   the application orientation is landscape and
-//   tapX > application portrait width or tapY > application portrait height.
-//   Pass the window element to the method [FBElementCommands gestureCoordinateWithCoordinate:element:]
-//   will resolve the problem.
-//   More details about the bug, please see the following issues:
-//   #705: https://github.com/facebook/WebDriverAgent/issues/705
-//   #798: https://github.com/facebook/WebDriverAgent/issues/798
-//   #856: https://github.com/facebook/WebDriverAgent/issues/856
-//   Notice: On iOS 10, if the application is not launched by wda, no elements will be found.
-//   See issue #732: https://github.com/facebook/WebDriverAgent/issues/732
-//   */
-//  XCUIElement *element = application;
-//  if (isSDKVersionGreaterThanOrEqualTo(@"11.0")) {
-//    XCUIElement *window = application.windows.fb_firstMatch;
-//    if (window) {
-//      element = window;
-//      point.x -= element.frame.origin.x;
-//      point.y -= element.frame.origin.y;
-//    }
-//  }
-//  return [self gestureCoordinateWithCoordinate:point element:element];
-//}
-//
-///**
-// Returns gesture coordinate based on the specified element.
-//
-// @param coordinate absolute coordinates based on the element
-// @param element the element in the current application under test
-// @return translated gesture coordinates ready to be passed to XCUICoordinate methods
-// */
-//+ (XCUICoordinate *)gestureCoordinateWithCoordinate:(CGPoint)coordinate element:(XCUIElement *)element
-//{
-//  XCUICoordinate *appCoordinate = [[XCUICoordinate alloc] initWithElement:element normalizedOffset:CGVectorMake(0, 0)];
-//  return [[XCUICoordinate alloc] initWithCoordinate:appCoordinate pointsOffset:CGVectorMake(coordinate.x, coordinate.y)];
-//}
 
 @end

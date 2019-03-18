@@ -27,8 +27,13 @@ class Inspector extends React.Component {
           Inspector
         </div>
         <div className="section-content-container">
-          <div className="section-content">
+          <div className="section-content" style={{overflowY:'scoll'}}>
             {this.renderInspector()}
+          </div>
+          <div className="section-content" style={{height:'40%'}}>
+            <div> Test Script </div>
+            <textarea className="inspector-script-text">
+            </textarea>
           </div>
         </div>
       </div>

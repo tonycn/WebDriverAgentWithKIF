@@ -47,6 +47,7 @@ html, body, #app {
 .section-content-container {
   padding: 5px;
   padding-top: 15px;
+  height: 100%;
 }
 
 .section-content {

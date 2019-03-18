@@ -50,7 +50,7 @@ static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteReque
 + (id<FBResponsePayload>)handleFindElement:(FBRouteRequest *)request
 {
   FBSession *session = request.session;
-  UIView *element = [self.class elementUsing:request.arguments[@"using"] withValue:request.arguments[@"value"] under:session.application.fb_windows];
+  UIView *element = [self.class elementUsing:request.arguments[@"using"] withValue:request.arguments[@"value"] under:session.application.fb_reversedWindows];
   if (!element) {
     return FBNoSuchElementErrorResponseForRequest(request);
   }
@@ -61,7 +61,7 @@ static id<FBResponsePayload> FBNoSuchElementErrorResponseForRequest(FBRouteReque
 {
   FBSession *session = request.session;
   NSMutableArray *foundElements = [NSMutableArray array];
-  for (UIWindow *window in session.application.fb_windows) {
+  for (UIWindow *window in session.application.fb_reversedWindows) {
     NSArray *elements = [self.class elementsUsing:request.arguments[@"using"]
                                         withValue:request.arguments[@"value"]
                                             under:window
