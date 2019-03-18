@@ -33,9 +33,6 @@ class Screen extends React.Component {
           Screen
         </div>
         <div>
-          <Button onClick={(ev) => {this.home(ev); }} >
-            Home
-          </Button>
           <Button onClick={this.props.refreshApp} >
             Refresh
           </Button>

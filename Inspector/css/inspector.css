@@ -13,6 +13,7 @@
 
 .inspector-field-caption {
   font-weight: bold;
+  margin-right: 5px;
 }
 
 .inspector-field-value {

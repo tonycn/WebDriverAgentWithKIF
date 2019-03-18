@@ -49,14 +49,9 @@ class Inspector extends React.Component {
     return (
       <div>
         {this.renderField('Class', attributes.type)}
-        {this.renderField('Class Chain', attributes.classChain)}
-        {this.renderField('Raw identifier', attributes.rawIdentifier)}
-        {this.renderField('Name', attributes.name)}
-        {this.renderField('Value', attributes.value)}
-        {this.renderField('Label', attributes.label)}
+        {this.renderField('Path', attributes.classChain)}
         {this.renderField('Rect', attributes.rect)}
         {this.renderField('isEnabled', boolToString(attributes.isEnabled))}
-        {this.renderField('isVisible', boolToString(attributes.isVisible))}
         {this.renderField('Tap', tapButton, false)}
      </div>
     );
@@ -74,12 +69,12 @@ class Inspector extends React.Component {
     }
     return (
       <div className="inspector-field">
-        <div className="inspector-field-caption">
+        <span className="inspector-field-caption">
           {fieldName}:
-        </div>
-        <div className="inspector-field-value">
+        </span>
+        <span className="inspector-field-value">
           {value}
-        </div>
+        </span>
       </div>
     );
   }
@@ -102,7 +97,9 @@ class Inspector extends React.Component {
               'session/' + session_id + '/element/' + element_id + '/click',
               JSON.stringify({}),
               (result) => {
-                this.props.refreshApp();
+                setTimeout(function () {
+                  this.props.refreshApp();
+                }.bind(this), 1000)
               },
             );
           },
