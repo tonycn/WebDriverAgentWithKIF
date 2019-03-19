@@ -48,7 +48,12 @@ class Inspector extends React.Component {
     const attributes = this.props.selectedNode.attributes;
     const tapButton =
       <Button onClick={(event) => this.tap(this.props.selectedNode)}>
-        tap
+        Tap
+      </Button>;
+
+    const assertButton =
+      <Button onClick={(event) => this.assert(this.props.selectedNode)}>
+        Assert
       </Button>;
 
     return (
@@ -58,6 +63,7 @@ class Inspector extends React.Component {
         {this.renderField('Rect', attributes.rect)}
         {this.renderField('isEnabled', boolToString(attributes.isEnabled))}
         {this.renderField('Tap', tapButton, false)}
+        {this.renderField('Assert', assertButton, false)}
      </div>
     );
   }
@@ -89,24 +95,34 @@ class Inspector extends React.Component {
       'status', (status_result) => {
         var session_id = status_result.sessionId;
         HTTP.post(
-          'session/' + session_id + '/elements',
+          'session/' + session_id + '/command/',
           JSON.stringify({
-            'using': 'class chain',
-            'value': node.attributes.classChain,
+            action: 'tap',
+            classChain: node.attributes.classChain
           }),
-          (elements_result) => {
-            var elements = elements_result.value;
-            var element_id = elements[0].ELEMENT;
-
-            HTTP.post(
-              'session/' + session_id + '/element/' + element_id + '/click',
-              JSON.stringify({}),
-              (result) => {
-                setTimeout(function () {
-                  this.props.refreshApp();
-                }.bind(this), 1000)
-              },
-            );
+          (result) => {
+            setTimeout(function () {
+              this.props.refreshApp();
+            }.bind(this), 1000)
+          },
+        );
+      },
+    );
+  }
+  assert(node) {
+    HTTP.get(
+      'status', (status_result) => {
+        var session_id = status_result.sessionId;
+        HTTP.post(
+          'session/' + session_id + '/command/',
+          JSON.stringify({
+            action: 'assert',
+            classChain: node.attributes.classChain
+          }),
+          (result) => {
+            setTimeout(function () {
+              this.props.refreshApp();
+            }.bind(this), 1000)
           },
         );
       },

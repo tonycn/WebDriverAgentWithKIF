@@ -50,6 +50,12 @@
   return command;
 }
 
++ (FBUIBaseCommand * _Nonnull)generateCommandByAction:(NSString *)action
+                                           classChain:(NSString *)classChain
+{
+  return [self generateCommandBy:@{@"action": action?:@"", @"classChain": classChain?:@""}];
+}
+
 - (void)executeDidFinish:(void (^)(BOOL succ, NSError *error))resultBlock
 {
   [self executeCommands:self.commands didFinish:resultBlock];

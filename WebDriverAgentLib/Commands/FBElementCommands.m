@@ -25,7 +25,8 @@
 #import "NSPredicate+FBFormat.h"
 #import "UIView+FBHelper.h"
 #import "FBElementCache.h"
-
+#import "FBUITestScript.h"
+#import "FBResponseFuturePayload.h"
 #import "UIView-KIFAdditions.h"
 #import "KIFTypist.h"
 
@@ -49,7 +50,7 @@
     [[FBRoute POST:@"/wda/element/:uuid/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDrag:)],
     [[FBRoute POST:@"/wda/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDragCoordinate:)],
     [[FBRoute POST:@"/wda/tap/:uuid"] respondWithTarget:self action:@selector(handleTap:)],
-    [[FBRoute POST:@"/wda/action/:uuid"] respondWithTarget:self action:@selector(handleAction:)],
+    [[FBRoute POST:@"/wda/command/"] respondWithTarget:self action:@selector(handleCommand:)],
     [[FBRoute POST:@"/wda/script"] respondWithTarget:self action:@selector(handleScript:)],
     [[FBRoute POST:@"/wda/keys"] respondWithTarget:self action:@selector(handleKeys:)],
   ];
@@ -165,9 +166,18 @@
   return FBResponseWithOK();
 }
 
-+ (id<FBResponsePayload>)handleAction:(FBRouteRequest *)request
++ (id<FBResponsePayload>)handleCommand:(FBRouteRequest *)request
 {
-  return FBResponseWithOK();
+    NSString *action = request.arguments[@"action"];
+    NSString *classChain = request.arguments[@"classChain"];
+    FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
+    FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:action
+                                                            classChain:classChain];
+    [command executeWithResultBlock:^(BOOL succ) {
+        id<FBResponsePayload> payload = FBResponseWithObject(@{@"command": command.toDictionary});
+        [future fillRealResponsePayload:payload];
+    }];
+    return future;
 }
 
 + (id<FBResponsePayload>)handleScript:(FBRouteRequest *)request
