@@ -11,15 +11,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FBUIBaseCommand : NSObject
 
-@property (nonatomic, strong) NSString *classChain;
-@property (nonatomic, strong) NSString *uuid;
 @property (nonatomic, strong) NSString *action;
-@property (nonatomic, strong) NSString *props;
+@property (nonatomic, strong, nullable) NSString *classChain;
+@property (nonatomic, strong, nullable) NSDictionary *props;
+@property (nonatomic) NSTimeInterval timeout;
 
-- (BOOL)execute;
+- (void)executeWithResultBlock:(void (^)(BOOL))resultBlock;
 
-- (NSArray <UIView *> *)findElementsByClassChain:(NSString *)classChain
++ (NSArray <UIView *> *)findElementsByClassChain:(NSString *)classChain
                      shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch;
+
++ (void)findElementByClassChain:(NSString *)classChain
+    shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch
+                        timeout:(NSTimeInterval)timeout
+                elementsDidFind:(void (^)(NSArray <UIView *> * _Nullable))elementsDidFind;
 
 @end
 

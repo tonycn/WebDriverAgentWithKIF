@@ -9,10 +9,8 @@
 
 #import "AppDelegate.h"
 
-#import "FBWebDriverServerRunner.h"
-#import "FBNavigationController.h"
+#import "FBApplication.h"
 #import "ViewController.h"
-
 
 @interface AppDelegate ()
 @end
@@ -28,12 +26,12 @@
   ViewController *firstViewController = [[ViewController alloc] init];
   firstViewController.title = @"First View";
   firstViewController.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
-  UINavigationController *rootNavController = [[FBNavigationController alloc] initWithRootViewController:firstViewController];
+  UINavigationController *rootNavController = [[UINavigationController alloc] initWithRootViewController:firstViewController];
   self.window.rootViewController = rootNavController;
   [self.window makeKeyAndVisible];
 
   dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    [[FBWebDriverServerRunner sharedRunner] startRunner];
+    [[FBApplication fb_activeApplication] launch];
   });
   
   return YES;

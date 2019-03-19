@@ -16,15 +16,14 @@
 
 @implementation FBUIBaseCommand
 
-- (BOOL)execute
+- (void)executeWithResultBlock:(void (^)(BOOL))resultBlock
 {
-  return NO;
+  resultBlock(NO);
 }
 
-- (NSArray <UIView *> *)findElementsByClassChain:(NSString *)classChain
++ (NSArray <UIView *> *)findElementsByClassChain:(NSString *)classChain
                      shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch
 {
-  
   FBSession *session = [FBSession activeSession];
   NSMutableArray *foundElements = [NSMutableArray array];
   for (UIWindow *window in session.application.fb_reversedWindows) {
@@ -35,6 +34,28 @@
     }
   }
   return foundElements;
+}
+
++ (void)findElementByClassChain:(NSString *)classChain
+    shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch
+                        timeout:(NSTimeInterval)timeout
+                elementsDidFind:(void (^)(NSArray <UIView *> *))elementsDidFind
+{
+  NSArray <UIView *> *elements = [self findElementsByClassChain:classChain
+                                    shouldReturnAfterFirstMatch:shouldReturnAfterFirstMatch];
+  if (elements.count > 0) {
+    elementsDidFind(elements);
+  } else {
+    if (timeout > 0) {
+      const NSTimeInterval minDelay = 0.1;
+      dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(minDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self findElementByClassChain:classChain
+          shouldReturnAfterFirstMatch:shouldReturnAfterFirstMatch
+                              timeout:timeout - minDelay
+                      elementsDidFind:elementsDidFind];
+      });
+    }
+  }
 }
 
 @end

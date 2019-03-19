@@ -14,6 +14,7 @@
 #import "UIApplication-KIFAdditions.h"
 #import "UIView+FBHelper.h"
 #import "UIWindow-KIFAdditions.h"
+#import "FBWebDriverServerRunner.h"
 
 @interface FBApplication ()
 @property (nonatomic, assign) BOOL fb_isObservingAppImplCurrentProcess;
@@ -33,7 +34,7 @@
 
 - (void)launch
 {
-    
+    [[FBWebDriverServerRunner sharedRunner] startRunner];
 }
 
 - (NSString *)bundleID
