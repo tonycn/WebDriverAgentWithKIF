@@ -46,13 +46,16 @@
     [[FBRoute POST:@"/element/:uuid/click"] respondWithTarget:self action:@selector(handleClick:)],
     [[FBRoute POST:@"/element/:uuid/clear"] respondWithTarget:self action:@selector(handleClear:)],
     [[FBRoute GET:@"/element/:uuid/screenshot"] respondWithTarget:self action:@selector(handleElementScreenshot:)],
-    [[FBRoute POST:@"/wda/element/:uuid/scroll"] respondWithTarget:self action:@selector(handleScroll:)],
-    [[FBRoute POST:@"/wda/element/:uuid/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDrag:)],
-    [[FBRoute POST:@"/wda/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDragCoordinate:)],
+    
+    [[FBRoute POST:@"/command"] respondWithTarget:self action:@selector(handleCommand:)],
+    [[FBRoute POST:@"/script"] respondWithTarget:self action:@selector(handleScript:)],
+    [[FBRoute POST:@"/keys"] respondWithTarget:self action:@selector(handleKeys:)],
+
     [[FBRoute POST:@"/wda/tap/:uuid"] respondWithTarget:self action:@selector(handleTap:)],
-    [[FBRoute POST:@"/wda/command/"] respondWithTarget:self action:@selector(handleCommand:)],
-    [[FBRoute POST:@"/wda/script"] respondWithTarget:self action:@selector(handleScript:)],
-    [[FBRoute POST:@"/wda/keys"] respondWithTarget:self action:@selector(handleKeys:)],
+
+//    [[FBRoute POST:@"/wda/element/:uuid/scroll"] respondWithTarget:self action:@selector(handleScroll:)],
+//    [[FBRoute POST:@"/wda/element/:uuid/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDrag:)],
+//    [[FBRoute POST:@"/wda/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDragCoordinate:)],
   ];
 }
 
@@ -157,13 +160,17 @@
       if (view) {
         CGPoint convertedPoint = [window convertPoint:tapPoint toView:view];
         [view tapAtPoint:convertedPoint];
+        element = view;
         break;
       }
     }
   } else {
     [element tapAtPoint:tapPoint];
   }
-  return FBResponseWithOK();
+  FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:@"tap"
+                                                          classChain:[element fb_generateElementClassChain]];
+
+  return  FBResponseWithObject(@{@"command": command.toDictionary});
 }
 
 + (id<FBResponsePayload>)handleCommand:(FBRouteRequest *)request

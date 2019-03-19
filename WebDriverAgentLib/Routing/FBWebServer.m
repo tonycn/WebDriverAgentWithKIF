@@ -79,7 +79,7 @@ static NSString *const FBServerURLEndMarker = @"<-ServerURLHere";
 - (void)startHTTPServer
 {
   self.server = [[RoutingHTTPServer alloc] init];
-  [self.server setRouteQueue:dispatch_get_main_queue()];
+  [self.server setRouteQueue:dispatch_queue_create("FBWebServerQueue", DISPATCH_QUEUE_SERIAL)];
   [self.server setDefaultHeader:@"Server" value:@"WebDriverAgent/1.0"];
   [self.server setConnectionClass:[FBHTTPConnection self]];
 

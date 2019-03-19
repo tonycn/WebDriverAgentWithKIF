@@ -39,7 +39,10 @@ static NSString *const FBRouteSessionPrefix = @"/session/:sessionID";
 {
   [self decorateRequest:request];
   id<FBResponsePayload> (*requestMsgSend)(id, SEL, FBRouteRequest *) = ((id<FBResponsePayload>(*)(id, SEL, FBRouteRequest *))objc_msgSend);
-  id<FBResponsePayload> payload = requestMsgSend(self.target, self.action, request);
+  __block id<FBResponsePayload> payload;
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    payload = requestMsgSend(self.target, self.action, request);
+  });
   [payload dispatchWithResponse:response];
 }
 

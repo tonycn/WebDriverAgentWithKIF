@@ -148,7 +148,9 @@ NS_ASSUME_NONNULL_END
 
 + (NSCharacterSet *)allowedCharacters
 {
-  return [NSCharacterSet letterCharacterSet];
+  NSMutableCharacterSet *set = [[NSCharacterSet letterCharacterSet] mutableCopy];
+  [set addCharactersInString:@"_"];
+  return set;
 }
 
 - (NSArray<Class> *)followingTokens

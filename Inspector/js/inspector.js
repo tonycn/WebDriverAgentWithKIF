@@ -95,7 +95,7 @@ class Inspector extends React.Component {
       'status', (status_result) => {
         var session_id = status_result.sessionId;
         HTTP.post(
-          'session/' + session_id + '/command/',
+          'session/' + session_id + '/command',
           JSON.stringify({
             action: 'tap',
             classChain: node.attributes.classChain
@@ -114,7 +114,7 @@ class Inspector extends React.Component {
       'status', (status_result) => {
         var session_id = status_result.sessionId;
         HTTP.post(
-          'session/' + session_id + '/command/',
+          'session/' + session_id + '/command',
           JSON.stringify({
             action: 'assert',
             classChain: node.attributes.classChain

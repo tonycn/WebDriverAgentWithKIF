@@ -164,6 +164,18 @@
   return elementQuery;
 }
 
+- (NSString *)fb_generateElementClassChain
+{
+    NSMutableString *classChain = [[self fb_generateElementQuery] mutableCopy];
+    UIView *superView = self.superview;
+    while (superView) {
+        [classChain insertString:@"/" atIndex:0];
+        [classChain insertString:[superView fb_generateElementQuery] atIndex:0];
+        superView = self.superview;
+    }
+    return classChain;
+}
+
 - (NSString *)fb_uuid
 {
   return [NSString stringWithFormat:@"%p", self];
