@@ -7,12 +7,19 @@
 
 #import <Foundation/Foundation.h>
 
+#import "FBUIBaseCommand.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FBUITestScript : NSObject
 
 @property (nonatomic, strong) NSString *scriptID;
 @property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSArray <FBUIBaseCommand *> *commands;
+
++ (FBUITestScript *)scriptByContent:(NSString *)scriptContent;
+
+- (void)executeDidFinish:(void (^)(BOOL succ, NSError *error))resultBlock;
 
 @end
 

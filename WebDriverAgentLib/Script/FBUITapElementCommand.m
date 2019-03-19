@@ -29,4 +29,9 @@
     }];
 }
 
++ (NSString *)actionString
+{
+    return @"tap";
+}
+
 @end

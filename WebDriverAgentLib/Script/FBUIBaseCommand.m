@@ -14,11 +14,38 @@
 #import "UIView-KIFAdditions.h"
 #import "UIView+FBHelper.h"
 
+NSString * FBUICommandErrorDomain = @"FBUICommandErrorDomain";
+NSString * FBUICommandErrorInfoKeyReason = @"reason";
+
+
 @implementation FBUIBaseCommand
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.timeout = 1.0;
+    }
+    return self;
+}
 
 - (void)executeWithResultBlock:(void (^)(BOOL))resultBlock
 {
   resultBlock(NO);
+}
+
+- (NSDictionary *)toDictionary
+{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:self.action forKey:@"action"];
+    if (self.classChain.length > 0) {
+        [dict setObject:self.classChain forKey:@"classChain"];
+    }
+    if (self.props) {
+        [dict setObject:self.props forKey:@"props"];
+    }
+    [dict setObject:@(self.timeout) forKey:@"timeout"];
+    return dict;
 }
 
 + (NSArray <UIView *> *)findElementsByClassChain:(NSString *)classChain
@@ -56,6 +83,21 @@
       });
     }
   }
+}
+
++ (NSString *)actionString
+{
+    return @"Not supported";
+}
+
+- (NSError *)commandError
+{
+  NSString *errorReason = [NSJSONSerialization dataWithJSONObject:self.originCommandDict options:0 error:NULL];
+  errorReason = errorReason ?: @"unkonwn reason";
+  NSError *error = [NSError errorWithDomain:FBUICommandErrorDomain
+                                       code:1
+                                   userInfo:@{FBUICommandErrorInfoKeyReason:errorReason}];
+  return error;
 }
 
 @end

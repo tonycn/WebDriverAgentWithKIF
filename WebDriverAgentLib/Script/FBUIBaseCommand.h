@@ -7,6 +7,10 @@
 
 #import <Foundation/Foundation.h>
 
+
+extern NSString * FBUICommandErrorDomain;
+extern NSString * FBUICommandErrorInfoKeyReason;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FBUIBaseCommand : NSObject
@@ -15,8 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) NSString *classChain;
 @property (nonatomic, strong, nullable) NSDictionary *props;
 @property (nonatomic) NSTimeInterval timeout;
+@property (nonatomic, strong, nullable) NSDictionary *originCommandDict;
 
 - (void)executeWithResultBlock:(void (^)(BOOL))resultBlock;
+
+- (NSDictionary *)toDictionary;
 
 + (NSArray <UIView *> *)findElementsByClassChain:(NSString *)classChain
                      shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch;
@@ -25,6 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
     shouldReturnAfterFirstMatch:(BOOL)shouldReturnAfterFirstMatch
                         timeout:(NSTimeInterval)timeout
                 elementsDidFind:(void (^)(NSArray <UIView *> * _Nullable))elementsDidFind;
+
++ (NSString *)actionString;
+
+- (NSError *)commandError;
 
 @end
 

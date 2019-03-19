@@ -21,4 +21,9 @@
     }];
 }
 
++ (NSString *)actionString
+{
+    return @"assert";
+}
+
 @end
