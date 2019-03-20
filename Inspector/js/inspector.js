@@ -47,11 +47,7 @@ class Inspector extends React.Component {
           <div className="section-content" style={{overflowY:'scoll'}}>
             {this.renderInspector()}
           </div>
-          <div className="section-content" style={{height:'40%'}}>
-            <div> Record Script </div>
-            <textarea className="inspector-script-text" value={this.state.script} onChange={this.handleScriptChange} >
-            </textarea>
-          </div>
+          {this.renderScriptEditor()}
         </div>
       </div>
     );
@@ -64,14 +60,15 @@ class Inspector extends React.Component {
 
     const attributes = this.state.selectedNode.attributes;
     const tapButton =
-      <Button onClick={(event) => this.tap(this.state.selectedNode)}>
-        Tap
-      </Button>;
-
-    const assertButton =
-      <Button onClick={(event) => this.assert(this.state.selectedNode)}>
-        Assert
-      </Button>;
+      <span>
+        <Button onClick={(event) => this.tap(this.state.selectedNode)}>
+          Tap
+        </Button>
+        <Button onClick={(event) => this.assert(this.state.selectedNode)}>
+          Assert
+        </Button>
+      </span>
+ 
 
     return (
       <div>
@@ -79,8 +76,7 @@ class Inspector extends React.Component {
         {this.renderField('Path', attributes.classChain)}
         {this.renderField('Rect', attributes.rect)}
         {this.renderField('isEnabled', boolToString(attributes.isEnabled))}
-        {this.renderField('Tap', tapButton, false)}
-        {this.renderField('Assert', assertButton, false)}
+        {this.renderField('Actions', tapButton, false)}
      </div>
     );
   }
@@ -105,6 +101,24 @@ class Inspector extends React.Component {
         </span>
       </div>
     );
+  }
+
+  renderScriptEditor() {
+    const headerDiv =
+      <span>
+        <span> Script Editor </span>
+        <Button onClick={(event) => this.execute(this.state.script)}>
+          Execute
+        </Button>
+      </span>
+
+    return (
+          <div className="section-content" style={{height:'40%'}}>
+            {headerDiv}
+            <textarea className="inspector-script-text" value={this.state.script} onChange={this.handleScriptChange} >
+            </textarea>
+          </div>
+        )
   }
 
   handleScriptChange(event) {
@@ -156,6 +170,26 @@ class Inspector extends React.Component {
             setTimeout(function () {
               this.props.refreshApp();
             }.bind(this), 1000)
+          },
+        );
+      },
+    );
+  }
+
+  execute(content) {
+    this.setState({
+      selectedNode: null
+    })
+    HTTP.get(
+      'status', (status_result) => {
+        var session_id = status_result.sessionId;
+        HTTP.post(
+          'session/' + session_id + '/script',
+          JSON.stringify({
+            script: content
+          }),
+          (result) => {
+            console.log(result)
           },
         );
       },

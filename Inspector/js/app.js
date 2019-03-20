@@ -53,6 +53,7 @@ class App extends React.Component {
             screenshot: screenshot,
           });
         });
+        this.fetchTree();
       });
     });
   }

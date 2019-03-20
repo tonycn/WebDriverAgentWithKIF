@@ -21,6 +21,8 @@
 #import "KIFTypist.h"
 #import "UIWindow-KIFAdditions.h"
 #import "FBElementCache.h"
+#import "FBUITestScript.h"
+#import "FBResponseFuturePayload.h"
 
 @implementation FBCustomCommands
 
@@ -34,6 +36,8 @@
     [[FBRoute POST:@"/wda/keyboard/dismiss"] respondWithTarget:self action:@selector(handleDismissKeyboardCommand:)],
     [[FBRoute GET:@"/wda/elementCache/size"] respondWithTarget:self action:@selector(handleGetElementCacheSizeCommand:)],
     [[FBRoute POST:@"/wda/elementCache/clear"] respondWithTarget:self action:@selector(handleClearElementCacheCommand:)],
+    [[FBRoute POST:@"/script"] respondWithTarget:self action:@selector(handleScriptCommand:)],
+
   ];
 }
 
@@ -75,4 +79,17 @@
   [elementCache clear];
   return FBResponseWithOK();
 }
+
++ (id<FBResponsePayload>)handleScriptCommand:(FBRouteRequest *)request
+{
+    NSString *scriptContent = request.parameters[@"script"];
+    FBUITestScript *script = [FBUITestScript scriptByContent:scriptContent];
+    
+    FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
+    [script executeDidFinish:^(BOOL succ, NSError * _Nonnull error) {
+        [future fillRealResponsePayload:FBResponseWithOK()];
+    }];
+    return futureton;
+}
+
 @end
