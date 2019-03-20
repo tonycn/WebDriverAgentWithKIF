@@ -171,7 +171,7 @@
     while (superView) {
         [classChain insertString:@"/" atIndex:0];
         [classChain insertString:[superView fb_generateElementQuery] atIndex:0];
-        superView = self.superview;
+        superView = superView.superview;
     }
     return classChain;
 }

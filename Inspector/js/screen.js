@@ -12,6 +12,7 @@ import React from 'react';
 
 import HTTP from 'js/http';
 import GestureRecognizer from 'js/gesture_recognizer';
+import PubSub from 'pubsub-js'
 
 var Button = require('react-button');
 
@@ -101,6 +102,7 @@ class Screen extends React.Component {
             'duration': params.duration,
           }),
           (tap_result) => {
+            console.log(tap_result);
             this.props.refreshApp();
           },
         );

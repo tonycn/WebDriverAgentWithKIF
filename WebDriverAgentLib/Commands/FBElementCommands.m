@@ -169,7 +169,6 @@
   }
   FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:@"tap"
                                                           classChain:[element fb_generateElementClassChain]];
-
   return  FBResponseWithObject(@{@"command": command.toDictionary});
 }
 
