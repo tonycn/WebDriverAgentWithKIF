@@ -30,9 +30,27 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
     return self;
 }
 
-- (void)executeWithResultBlock:(void (^)(BOOL))resultBlock
+- (void)waitUntilElement:(void (^)(UIView *element))resultBlock
 {
-  resultBlock(NO);
+  [self.class findElementByClassChain:self.path shouldReturnAfterFirstMatch:YES timeout:self.timeout elementsDidFind:^(NSArray<UIView *> * _Nonnull elements) {
+    resultBlock(elements.firstObject);
+  }];
+}
+
+- (BOOL)executeOn:(UIView *)element
+{
+  return NO;
+}
+
+- (void)executeWithResultBlock:(void (^)(BOOL succ, UIView *element))resultBlock
+{
+  [self waitUntilElement:^(UIView * _Nullable element) {
+    if (element) {
+      resultBlock([self executeOn:element], element);
+    } else {
+      resultBlock(NO, nil);
+    }
+  }];
 }
 
 - (NSDictionary *)toDictionary
@@ -53,7 +71,7 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
 {
   NSString *reducedPath = [element fb_generateElementReducedClassChain];
   NSArray *findElements = [self.class findElementsByClassChain:reducedPath shouldReturnAfterFirstMatch:NO];
-  if (findElements.count == 1) {
+  if (findElements.count == 1 && findElements.firstObject == element) {
     self.path = reducedPath;
   }
 }

@@ -16,17 +16,14 @@
 
 @implementation FBUITapElementCommand
 
-- (void)executeWithResultBlock:(void (^)(BOOL succ, UIView *element))resultBlock
+- (BOOL)executeOn:(UIView *)element
 {
-    [self.class findElementByClassChain:self.path shouldReturnAfterFirstMatch:YES timeout:self.timeout elementsDidFind:^(NSArray<UIView *> * _Nonnull elements) {
-        UIView *element = elements.firstObject;
-        if (element) {
-            [element tap];
-            resultBlock(YES, element);
-        } else {
-            resultBlock(NO, nil);
-        }
-    }];
+  if (element) {
+    [element tap];
+    return YES;
+  } else {
+    return NO;
+  }
 }
 
 + (NSString *)actionString

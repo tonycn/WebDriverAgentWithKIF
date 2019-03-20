@@ -509,7 +509,7 @@ static NSNumberFormatter *numberFormatter = nil;
 {
   NSMutableArray *result = [NSMutableArray array];
   NSString *chainElementType = nil;
-  int chainElementPosition = 1;
+  int chainElementPosition = 0;
   BOOL isTypeSet = NO;
   BOOL isPositionSet = NO;
   BOOL isDescendantSet = NO;
@@ -583,7 +583,7 @@ static NSNumberFormatter *numberFormatter = nil;
       isPositionSet = YES;
     } else if ([token isKindOfClass:FBSplitterToken.class]) {
       if (!isPositionSet) {
-        chainElementPosition = 1;
+        chainElementPosition = 0;
       }
       if (isDescendantSet) {
         if (isTypeSet) {

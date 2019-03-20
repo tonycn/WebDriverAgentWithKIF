@@ -94,9 +94,12 @@
       if (commands.count == 1) {
         resultBlock(YES, [cmd commandError]);
       } else {
-        NSArray *remainsArr = [commands subarrayWithRange:NSMakeRange(1, commands.count-1)];
-        [self executeCommands:remainsArr
-                    didFinish:resultBlock];
+        // delay 1s to execute next command
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+          NSArray *remainsArr = [commands subarrayWithRange:NSMakeRange(1, commands.count-1)];
+          [self executeCommands:remainsArr
+                      didFinish:resultBlock];
+        });
       }
     } else {
       resultBlock(NO, [cmd commandError]);

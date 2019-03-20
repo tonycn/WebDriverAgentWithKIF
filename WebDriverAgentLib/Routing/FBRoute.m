@@ -41,7 +41,11 @@ static NSString *const FBRouteSessionPrefix = @"/session/:sessionID";
   id<FBResponsePayload> (*requestMsgSend)(id, SEL, FBRouteRequest *) = ((id<FBResponsePayload>(*)(id, SEL, FBRouteRequest *))objc_msgSend);
   __block id<FBResponsePayload> payload;
   dispatch_sync(dispatch_get_main_queue(), ^{
-    payload = requestMsgSend(self.target, self.action, request);
+    @try {
+      payload = requestMsgSend(self.target, self.action, request);
+    } @catch (NSException *exception) {
+      [payload dispatchWithResponse:FBResponseWithError([NSError errorWithDomain:@"FBHandlerException" code:1 userInfo:nil])];
+    }
   });
   [payload dispatchWithResponse:response];
 }

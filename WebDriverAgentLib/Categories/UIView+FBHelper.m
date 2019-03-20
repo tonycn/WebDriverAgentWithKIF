@@ -135,6 +135,10 @@
 
 - (BOOL)fb_matchClassChainItem:(FBClassChainItem *)classChainItem
 {
+  if (![classChainItem.type isEqualToString:self.fb_type]) {
+    return NO;
+  }
+  
   if (!(classChainItem.position == 0
         || classChainItem.position == self.fb_position
         || classChainItem.position == self.fb_minusPosition)) {
@@ -148,6 +152,11 @@
       }
     }
   }
+  
+  if (self.hidden || self.userInteractionEnabled == NO) {
+    return NO;
+  }
+
   return YES;
 }
 
@@ -205,6 +214,11 @@
 - (NSString *)fb_uuid
 {
   return [NSString stringWithFormat:@"%p", self];
+}
+
+- (NSString *)fb_type
+{
+  return NSStringFromClass(self.class);
 }
 
 - (BOOL)fb_checkIfEnabled

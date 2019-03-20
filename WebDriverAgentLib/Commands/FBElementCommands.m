@@ -48,7 +48,6 @@
     [[FBRoute GET:@"/element/:uuid/screenshot"] respondWithTarget:self action:@selector(handleElementScreenshot:)],
     
     [[FBRoute POST:@"/command"] respondWithTarget:self action:@selector(handleCommand:)],
-    [[FBRoute POST:@"/script"] respondWithTarget:self action:@selector(handleScript:)],
     [[FBRoute POST:@"/keys"] respondWithTarget:self action:@selector(handleKeys:)],
 
     [[FBRoute POST:@"/wda/tap/:uuid"] respondWithTarget:self action:@selector(handleTap:)],
@@ -158,44 +157,38 @@
     for (UIWindow *window in request.session.application.fb_reversedWindows) {
       UIView * view = [window hitTest:tapPoint withEvent:nil];
       if (view) {
-        CGPoint convertedPoint = [window convertPoint:tapPoint toView:view];
-        [view tapAtPoint:convertedPoint];
+        tapPoint = [window convertPoint:tapPoint toView:view];
         element = view;
         break;
       }
     }
-  } else {
-    [element tapAtPoint:tapPoint];
   }
+  
   FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:@"tap"
                                                           classChain:[element fb_generateElementClassChain]];
   [command reducePathIfPossibleForElement:element];
+  [element tapAtPoint:tapPoint];
   return  FBResponseWithObject(@{@"command": command.toDictionary});
 }
 
 + (id<FBResponsePayload>)handleCommand:(FBRouteRequest *)request
 {
-    NSString *action = request.arguments[@"action"];
-    NSString *classChain = request.arguments[@"classChain"];
-    FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
-    FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:action
-                                                            classChain:classChain];
-    [command executeWithResultBlock:^(BOOL succ, UIView *element) {
+  NSString *action = request.arguments[@"action"];
+  NSString *classChain = request.arguments[@"classChain"];
+  FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
+  FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:action
+                                                          classChain:classChain];
+  [command waitUntilElement:^(UIView * _Nullable element) {
+    if (element) {
       [command reducePathIfPossibleForElement:element];
+      [command executeOn:element];
       id<FBResponsePayload> payload = FBResponseWithObject(@{@"command": command.toDictionary});
       [future fillRealResponsePayload:payload];
-    }];
-    return future;
-}
-
-+ (id<FBResponsePayload>)handleScript:(FBRouteRequest *)request
-{
-  
-  NSString *scriptContext = request.arguments[@"context"];
-  NSArray <NSString *> *lines = [scriptContext componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-  
-  
-  return FBResponseWithOK();
+    } else {
+      [future fillRealResponsePayload:FBResponseWithStatus(FBCommandStatusNoSuchElement, request.arguments)];
+    }
+  }];
+  return future;
 }
 
 + (id<FBResponsePayload>)handleKeys:(FBRouteRequest *)request

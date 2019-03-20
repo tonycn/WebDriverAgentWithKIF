@@ -82,14 +82,14 @@
 
 + (id<FBResponsePayload>)handleScriptCommand:(FBRouteRequest *)request
 {
-    NSString *scriptContent = request.parameters[@"script"];
-    FBUITestScript *script = [FBUITestScript scriptByContent:scriptContent];
+    NSString *scriptContent = request.arguments[@"script"];
+    FBUITestScript *script = [FBUITestScript scriptByCommandLines:scriptContent];
     
     FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
     [script executeDidFinish:^(BOOL succ, NSError * _Nonnull error) {
         [future fillRealResponsePayload:FBResponseWithOK()];
     }];
-    return futureton;
+    return future;
 }
 
 @end

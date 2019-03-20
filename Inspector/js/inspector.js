@@ -115,7 +115,9 @@ class Inspector extends React.Component {
     return (
           <div className="section-content" style={{height:'40%'}}>
             {headerDiv}
-            <textarea className="inspector-script-text" value={this.state.script} onChange={this.handleScriptChange} >
+            <textarea className="inspector-script-text" 
+            value={this.state.script} 
+            onChange={(event) => {this.handleScriptChange(event)}} >
             </textarea>
           </div>
         )

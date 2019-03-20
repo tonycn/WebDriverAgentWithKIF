@@ -21,8 +21,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSTimeInterval timeout;
 @property (nonatomic, strong, nullable) NSDictionary *originCommandDict;
 
+// Step 1
+- (void)waitUntilElement:(void (^)(UIView * _Nullable element ))resultBlock;
+
+// Step 2
+- (BOOL)executeOn:(UIView *)element;
+
 - (void)executeWithResultBlock:(void (^)(BOOL succ, UIView *element))resultBlock;
 
+#pragma mark -
 - (NSDictionary *)toDictionary;
 
 - (void)reducePathIfPossibleForElement:(UIView *)element;
