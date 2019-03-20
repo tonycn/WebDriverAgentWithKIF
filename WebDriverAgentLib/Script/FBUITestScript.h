@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSArray <FBUIBaseCommand *> *commands;
 
 + (FBUITestScript *)scriptByContent:(NSString *)scriptContent;
++ (FBUITestScript *)scriptByCommandLines:(NSString *)commandLines;
 
 + (FBUIBaseCommand * _Nonnull)generateCommandByAction:(NSString *)action
                                            classChain:(NSString *)classChain;

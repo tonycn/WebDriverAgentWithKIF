@@ -33,6 +33,10 @@ class App extends React.Component {
   refreshApp() {
     this.fetchScreenshot();
     this.fetchTree();
+    this.setState({
+      selectedNode: null
+    });
+    this.inspector.updateSelectedNode(null)
   }
 
   componentDidMount() {
@@ -80,11 +84,12 @@ class App extends React.Component {
             this.setState({
               selectedNode: node,
             });
+            this.inspector.updateSelectedNode(node)
           }}
           rootNode={this.state.rootNode}
           selectedNode={this.state.selectedNode} />
         <Inspector
-          selectedNode={this.state.selectedNode}
+          onRef={ref => (this.inspector = ref)}
           refreshApp={() => { this.refreshApp(); }} />
       </div>
     );

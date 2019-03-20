@@ -26,6 +26,7 @@ class Inspector extends React.Component {
     this.state = {
       script: ""
     }
+    this.props.onRef(this)
     var selfRef = this;
     PubSub.subscribe("AddScriptCommandMessage", function (msg, command) {
       var commandLine = JSON.stringify(command)
@@ -47,7 +48,7 @@ class Inspector extends React.Component {
             {this.renderInspector()}
           </div>
           <div className="section-content" style={{height:'40%'}}>
-            <div> Test Script </div>
+            <div> Record Script </div>
             <textarea className="inspector-script-text" value={this.state.script} onChange={this.handleScriptChange} >
             </textarea>
           </div>
@@ -57,18 +58,18 @@ class Inspector extends React.Component {
   }
 
   renderInspector() {
-    if (this.props.selectedNode == null) {
+    if (this.state.selectedNode == null) {
       return null;
     }
 
-    const attributes = this.props.selectedNode.attributes;
+    const attributes = this.state.selectedNode.attributes;
     const tapButton =
-      <Button onClick={(event) => this.tap(this.props.selectedNode)}>
+      <Button onClick={(event) => this.tap(this.state.selectedNode)}>
         Tap
       </Button>;
 
     const assertButton =
-      <Button onClick={(event) => this.assert(this.props.selectedNode)}>
+      <Button onClick={(event) => this.assert(this.state.selectedNode)}>
         Assert
       </Button>;
 
@@ -112,7 +113,14 @@ class Inspector extends React.Component {
     });
   }
 
+  updateSelectedNode(node) {
+    this.setState({
+      selectedNode: node
+    });
+  }
+
   tap(node) {
+    this.setState({selectedNode: null})
     HTTP.get(
       'status', (status_result) => {
         var session_id = status_result.sessionId;
@@ -133,6 +141,7 @@ class Inspector extends React.Component {
     );
   }
   assert(node) {
+    this.setState({selectedNode: null})
     HTTP.get(
       'status', (status_result) => {
         var session_id = status_result.sessionId;

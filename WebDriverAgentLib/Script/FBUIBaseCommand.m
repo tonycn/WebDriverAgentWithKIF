@@ -35,13 +35,6 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
   resultBlock(NO);
 }
 
-- (void)reducePath
-{
-  FBClassChain * parsedChain = [FBClassChainQueryParser parseQuery:self.path error:NULL];
-  
-  
-}
-
 - (NSDictionary *)toDictionary
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];

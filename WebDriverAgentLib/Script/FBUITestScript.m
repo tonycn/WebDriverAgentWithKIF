@@ -19,10 +19,30 @@
   FBUITestScript *script = [[FBUITestScript alloc] init];
   script.scriptID = jsonDict[@"scriptID"];
   script.name = jsonDict[@"name"];
-  NSArray <NSString *> * commandDictArr = jsonDict[@"commands"];
+  NSArray <NSDictionary *> * commandDictArr = jsonDict[@"commands"];
   NSMutableArray <FBUIBaseCommand *> *commands = [NSMutableArray arrayWithCapacity:commandDictArr.count];
   for (NSDictionary *commandDict in commandDictArr) {
     [commands addObject:[self generateCommandBy:commandDict]];
+  }
+  script.commands = commands;
+  return script;
+}
+
++ (FBUITestScript *)scriptByCommandLines:(NSString *)commandLines
+{
+  FBUITestScript *script = [[FBUITestScript alloc] init];
+  script.scriptID = @"default";
+  script.name = @"default";
+  
+  NSArray <NSString *> *lines = [commandLines componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+  NSMutableArray <NSDictionary *> * commandDictArr = [NSMutableArray array];
+  NSMutableArray <FBUIBaseCommand *> *commands = [NSMutableArray array];
+  for (NSString *line in lines) {
+    NSError *error;
+    NSDictionary *commandDict = [NSJSONSerialization JSONObjectWithData:[line dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+    if (commandDict && error == nil) {
+      [commands addObject:[self generateCommandBy:commandDict]];
+    }
   }
   script.commands = commands;
   return script;
