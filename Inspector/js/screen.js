@@ -102,7 +102,6 @@ class Screen extends React.Component {
             'duration': params.duration,
           }),
           (tap_result) => {
-            console.log(tap_result);
             this.props.refreshApp();
           },
         );
@@ -132,6 +131,7 @@ class Screen extends React.Component {
             'y': y,
           }),
           (tap_result) => {
+            PubSub.publish('AddScriptCommandMessage', tap_result['value']['command']);
             this.props.refreshApp();
           },
         );

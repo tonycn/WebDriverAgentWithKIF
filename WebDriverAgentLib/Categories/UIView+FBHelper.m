@@ -155,13 +155,20 @@
 
 - (NSString *)fb_generateElementQuery
 {
-  NSMutableString *elementQuery = [[NSMutableString alloc] init];
-  [elementQuery appendString:NSStringFromClass(self.class)];
-  if (self.fb_label.length > 0) {
-    [elementQuery appendFormat:@"[`fb_label == '%@'`]", self.fb_label];
-  }
-  [elementQuery appendFormat:@"[%@]", @(self.fb_position)];
-  return elementQuery;
+    return [self fb_generateElementQueryWithPosition:YES];
+}
+
+- (NSString *)fb_generateElementQueryWithPosition:(BOOL)withPosition
+{
+    NSMutableString *elementQuery = [[NSMutableString alloc] init];
+    [elementQuery appendString:NSStringFromClass(self.class)];
+    if (self.fb_label.length > 0) {
+        [elementQuery appendFormat:@"[`fb_label == '%@'`]", self.fb_label];
+    }
+    if (withPosition) {
+        [elementQuery appendFormat:@"[%@]", @(self.fb_position)];
+    }
+    return elementQuery;
 }
 
 - (NSString *)fb_generateElementClassChain
@@ -175,6 +182,25 @@
     }
     return classChain;
 }
+
+- (NSString *)fb_generateElementReducedClassChain
+{
+    NSMutableString *classChain = [[self fb_generateElementQueryWithPosition:NO] mutableCopy];
+    UIView *superView = self.superview;
+    NSInteger descendantLevel = 1;
+    while (superView) {
+        [classChain insertString:@"/" atIndex:0];
+        [classChain insertString:[superView fb_generateElementQueryWithPosition:NO] atIndex:0];
+        superView = superView.superview;
+        ++descendantLevel;
+        if (superView != nil && descendantLevel == 2) {
+            [classChain insertString:@"**/" atIndex:0];
+            break;
+        }
+    }
+    return classChain;
+}
+
 
 - (NSString *)fb_uuid
 {

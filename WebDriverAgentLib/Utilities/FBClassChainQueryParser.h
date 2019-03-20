@@ -61,6 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithType:(NSString *)type position:(NSInteger)position predicates:(NSArray<FBAbstractPredicateItem *> *)predicates isDescendant:(BOOL)isDescendant;
 
+- (NSString *)toQueryString;
+
 @end
 
 @interface FBClassChain : NSObject

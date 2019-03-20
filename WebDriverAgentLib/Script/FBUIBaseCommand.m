@@ -13,6 +13,7 @@
 #import "FBElementCache.h"
 #import "UIView-KIFAdditions.h"
 #import "UIView+FBHelper.h"
+#import "FBClassChainQueryParser.h"
 
 NSString * FBUICommandErrorDomain = @"FBUICommandErrorDomain";
 NSString * FBUICommandErrorInfoKeyReason = @"reason";
@@ -34,18 +35,34 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
   resultBlock(NO);
 }
 
+- (void)reducePath
+{
+  FBClassChain * parsedChain = [FBClassChainQueryParser parseQuery:self.path error:NULL];
+  
+  
+}
+
 - (NSDictionary *)toDictionary
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:self.action forKey:@"action"];
-    if (self.classChain.length > 0) {
-        [dict setObject:self.classChain forKey:@"classChain"];
+    if (self.path.length > 0) {
+        [dict setObject:self.path forKey:@"path"];
     }
     if (self.props) {
         [dict setObject:self.props forKey:@"props"];
     }
     [dict setObject:@(self.timeout) forKey:@"timeout"];
     return dict;
+}
+
+- (void)reducePathIfPossibleForElement:(UIView *)element
+{
+  NSString *reducedPath = [element fb_generateElementReducedClassChain];
+  NSArray *findElements = [self.class findElementsByClassChain:reducedPath shouldReturnAfterFirstMatch:NO];
+  if (findElements.count == 1) {
+    self.path = reducedPath;
+  }
 }
 
 + (NSArray <UIView *> *)findElementsByClassChain:(NSString *)classChain

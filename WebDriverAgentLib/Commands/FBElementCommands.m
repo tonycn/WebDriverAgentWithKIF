@@ -169,6 +169,7 @@
   }
   FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:@"tap"
                                                           classChain:[element fb_generateElementClassChain]];
+  [command reducePathIfPossibleForElement:element];
   return  FBResponseWithObject(@{@"command": command.toDictionary});
 }
 
@@ -179,9 +180,10 @@
     FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
     FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:action
                                                             classChain:classChain];
-    [command executeWithResultBlock:^(BOOL succ) {
-        id<FBResponsePayload> payload = FBResponseWithObject(@{@"command": command.toDictionary});
-        [future fillRealResponsePayload:payload];
+    [command executeWithResultBlock:^(BOOL succ, UIView *element) {
+      [command reducePathIfPossibleForElement:element];
+      id<FBResponsePayload> payload = FBResponseWithObject(@{@"command": command.toDictionary});
+      [future fillRealResponsePayload:payload];
     }];
     return future;
 }

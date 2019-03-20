@@ -41,7 +41,8 @@
     command = [[FBUIBaseCommand alloc] init];
   }
   command.action = actionStr;
-  command.classChain = commandDict[@"classChain"];
+  // 兼容 path 和 classChain
+  command.path = commandDict[@"path"];
   command.props = commandDict[@"props"];
   if (commandDict[@"timeout"]) {
     command.timeout = [commandDict[@"timeout"] doubleValue];
@@ -53,7 +54,7 @@
 + (FBUIBaseCommand * _Nonnull)generateCommandByAction:(NSString *)action
                                            classChain:(NSString *)classChain
 {
-  return [self generateCommandBy:@{@"action": action?:@"", @"classChain": classChain?:@""}];
+  return [self generateCommandBy:@{@"action": action?:@"", @"path": classChain?:@""}];
 }
 
 - (void)executeDidFinish:(void (^)(BOOL succ, NSError *error))resultBlock
@@ -68,7 +69,7 @@
     resultBlock(NO, nil);
   }
   FBUIBaseCommand *cmd = [commands firstObject];
-  [cmd executeWithResultBlock:^(BOOL succ) {
+  [cmd executeWithResultBlock:^(BOOL succ, UIView *element) {
     if (succ) {
       if (commands.count == 1) {
         resultBlock(YES, [cmd commandError]);

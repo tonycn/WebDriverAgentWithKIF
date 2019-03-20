@@ -10,6 +10,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import PubSub from 'pubsub-js'
 import HTTP from 'js/http';
 var Button = require('react-button');
 
@@ -20,6 +21,21 @@ function boolToString(boolValue) {
 }
 
 class Inspector extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      script: ""
+    }
+    var selfRef = this;
+    PubSub.subscribe("AddScriptCommandMessage", function (msg, command) {
+      var commandLine = JSON.stringify(command)
+      var scriptContent = selfRef.state['script'] + "\n" + commandLine
+      selfRef.setState({
+        script: scriptContent
+      })
+    })
+  }
+
   render() {
     return (
       <div id="inspector" className="section third">
@@ -32,7 +48,7 @@ class Inspector extends React.Component {
           </div>
           <div className="section-content" style={{height:'40%'}}>
             <div> Test Script </div>
-            <textarea className="inspector-script-text">
+            <textarea className="inspector-script-text" value={this.state.script} onChange={this.handleScriptChange} >
             </textarea>
           </div>
         </div>
@@ -90,6 +106,12 @@ class Inspector extends React.Component {
     );
   }
 
+  handleScriptChange(event) {
+    this.setState({
+      script: event.target.value
+    });
+  }
+
   tap(node) {
     HTTP.get(
       'status', (status_result) => {
@@ -101,6 +123,7 @@ class Inspector extends React.Component {
             classChain: node.attributes.classChain
           }),
           (result) => {
+            PubSub.publish('AddScriptCommandMessage', result['value']['command']);
             setTimeout(function () {
               this.props.refreshApp();
             }.bind(this), 1000)
@@ -120,6 +143,7 @@ class Inspector extends React.Component {
             classChain: node.attributes.classChain
           }),
           (result) => {
+            PubSub.publish('AddScriptCommandMessage', result['value']['command']);
             setTimeout(function () {
               this.props.refreshApp();
             }.bind(this), 1000)

@@ -9,14 +9,14 @@
 
 @implementation FBUIAssertCommand
 
-- (void)executeWithResultBlock:(void (^)(BOOL))resultBlock
+- (void)executeWithResultBlock:(void (^)(BOOL succ, UIView *element))resultBlock
 {
-    [self.class findElementByClassChain:self.classChain shouldReturnAfterFirstMatch:YES timeout:self.timeout elementsDidFind:^(NSArray<UIView *> * _Nonnull elements) {
+    [self.class findElementByClassChain:self.path shouldReturnAfterFirstMatch:YES timeout:self.timeout elementsDidFind:^(NSArray<UIView *> * _Nonnull elements) {
         UIView *element = elements.firstObject;
         if (element) {
-            resultBlock(YES);
+            resultBlock(YES, element);
         } else {
-            resultBlock(NO);
+            resultBlock(NO, element);
         }
     }];
 }
