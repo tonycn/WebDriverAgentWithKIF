@@ -46,7 +46,7 @@ Pods
 Inspector/node_modules
 
 # Resource bundle recreated on each build
-Resources/WebDriverAgent.bundle
+# Resources/WebDriverAgent.bundle
 
 # Modules map recreated on each build
 Modules/module.modulemap
