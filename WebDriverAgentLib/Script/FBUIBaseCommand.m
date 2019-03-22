@@ -69,10 +69,13 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
 
 - (void)reducePathIfPossibleForElement:(UIView *)element
 {
-  NSString *reducedPath = [element fb_generateElementReducedClassChain];
-  NSArray *findElements = [self.class findElementsByClassChain:reducedPath shouldReturnAfterFirstMatch:NO];
-  if (findElements.count == 1 && findElements.firstObject == element) {
-    self.path = reducedPath;
+  for (NSInteger pathLevel = 2; pathLevel <= 5; ++pathLevel) {
+    NSString *reducedPath = [element fb_generateElementReducedClassChainByMaxLevel:pathLevel];
+    NSArray *findElements = [self.class findElementsByClassChain:reducedPath shouldReturnAfterFirstMatch:NO];
+    if (findElements.count == 1 && findElements.firstObject == element) {
+      self.path = reducedPath;
+      break;
+    }
   }
 }
 

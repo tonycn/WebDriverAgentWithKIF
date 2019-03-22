@@ -153,10 +153,10 @@
     }
   }
   
-  if (self.hidden || self.userInteractionEnabled == NO) {
+  if (self.hidden) {
     return NO;
   }
-
+  
   return YES;
 }
 
@@ -164,50 +164,55 @@
 
 - (NSString *)fb_generateElementQuery
 {
-    return [self fb_generateElementQueryWithPosition:YES];
+  return [self fb_generateElementQueryWithPosition:YES];
 }
 
 - (NSString *)fb_generateElementQueryWithPosition:(BOOL)withPosition
 {
-    NSMutableString *elementQuery = [[NSMutableString alloc] init];
-    [elementQuery appendString:NSStringFromClass(self.class)];
-    if (self.fb_label.length > 0) {
-        [elementQuery appendFormat:@"[`fb_label == '%@'`]", self.fb_label];
-    }
-    if (withPosition) {
-        [elementQuery appendFormat:@"[%@]", @(self.fb_position)];
-    }
-    return elementQuery;
+  NSMutableString *elementQuery = [[NSMutableString alloc] init];
+  [elementQuery appendString:NSStringFromClass(self.class)];
+  if (self.fb_label.length > 0) {
+    [elementQuery appendFormat:@"[`fb_label == '%@'`]", self.fb_label];
+  }
+  if (self.fb_index > 0) {
+    [elementQuery appendFormat:@"[`fb_index == %d`]", self.fb_index];
+  }
+
+  NSInteger pos = self.fb_position;
+  if (withPosition && pos > 0) {
+    [elementQuery appendFormat:@"[%@]", @(pos)];
+  }
+  return elementQuery;
 }
 
 - (NSString *)fb_generateElementClassChain
 {
-    NSMutableString *classChain = [[self fb_generateElementQuery] mutableCopy];
-    UIView *superView = self.superview;
-    while (superView) {
-        [classChain insertString:@"/" atIndex:0];
-        [classChain insertString:[superView fb_generateElementQuery] atIndex:0];
-        superView = superView.superview;
-    }
-    return classChain;
+  NSMutableString *classChain = [[self fb_generateElementQuery] mutableCopy];
+  UIView *superView = self.superview;
+  while (superView) {
+    [classChain insertString:@"/" atIndex:0];
+    [classChain insertString:[superView fb_generateElementQuery] atIndex:0];
+    superView = superView.superview;
+  }
+  return classChain;
 }
 
-- (NSString *)fb_generateElementReducedClassChain
+- (NSString *)fb_generateElementReducedClassChainByMaxLevel:(NSInteger)level
 {
-    NSMutableString *classChain = [[self fb_generateElementQueryWithPosition:NO] mutableCopy];
-    UIView *superView = self.superview;
-    NSInteger descendantLevel = 1;
-    while (superView) {
-        [classChain insertString:@"/" atIndex:0];
-        [classChain insertString:[superView fb_generateElementQueryWithPosition:NO] atIndex:0];
-        superView = superView.superview;
-        ++descendantLevel;
-        if (superView != nil && descendantLevel == 2) {
-            [classChain insertString:@"**/" atIndex:0];
-            break;
-        }
+  NSMutableString *classChain = [[self fb_generateElementQueryWithPosition:NO] mutableCopy];
+  UIView *superView = self.superview;
+  NSInteger descendantLevel = 1;
+  while (superView) {
+    [classChain insertString:@"/" atIndex:0];
+    [classChain insertString:[superView fb_generateElementQueryWithPosition:NO] atIndex:0];
+    superView = superView.superview;
+    ++descendantLevel;
+    if (superView != nil && descendantLevel == level) {
+      [classChain insertString:@"**/" atIndex:0];
+      break;
     }
-    return classChain;
+  }
+  return classChain;
 }
 
 
@@ -236,7 +241,34 @@
 
 - (NSInteger)fb_position
 {
+  if ([self isKindOfClass:[UITableViewCell class]]) {
+    return 0;
+  }
+  if ([self isKindOfClass:[UICollectionViewCell class]]) {
+    return 0;
+  }
   return [self.superview.subviews indexOfObject:self] + 1;
+}
+
+- (NSInteger)fb_index
+{
+  if ([self isKindOfClass:[UITableViewCell class]]) {
+    UITableViewCell *cell = (id)self;
+    UITableView *tableView = [self findSuperViewOfClass:UITableView.class];
+    if (tableView) {
+      NSIndexPath *indexPath = [tableView indexPathForCell:cell];
+      return 10000 * indexPath.section + indexPath.row + 1;
+    }
+  }
+  if ([self isKindOfClass:[UICollectionViewCell class]]) {
+    UICollectionViewCell *cell = (id)self;
+    UICollectionView *collectionView = [self findSuperViewOfClass:UICollectionView.class];
+    if (collectionView) {
+      NSIndexPath *indexPath = [collectionView indexPathForCell:cell];
+      return 10000 * indexPath.section + indexPath.row + 1;
+    }
+  }
+  return 0;
 }
 
 - (NSInteger)fb_minusPosition
@@ -293,6 +325,18 @@
     [KIFTypist enterCharacter:@"\b"];
   }
   return YES;
+}
+
+- (UIView *)findSuperViewOfClass:(Class)viewClass
+{
+  UIView *superView = self.superview;
+  while (superView) {
+    if ([superView isKindOfClass:viewClass]) {
+      return superView;
+    }
+    superView = superView.superview;
+  }
+  return nil;
 }
 
 @end

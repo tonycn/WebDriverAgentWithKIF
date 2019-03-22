@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)fb_generateElementClassChain;
 
-- (NSString *)fb_generateElementReducedClassChain;
+- (NSString *)fb_generateElementReducedClassChainByMaxLevel:(NSInteger)level;
 
 - (NSString *)fb_uuid;
 

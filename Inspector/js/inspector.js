@@ -192,6 +192,9 @@ class Inspector extends React.Component {
           }),
           (result) => {
             console.log(result)
+            setTimeout(function () {
+              this.props.refreshApp();
+            }.bind(this), 1000)
           },
         );
       },

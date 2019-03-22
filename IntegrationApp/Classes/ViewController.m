@@ -9,10 +9,12 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
+@interface ViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (strong, nonatomic) UITextField *text;
 @property (strong, nonatomic) UILabel *label;
 @property (strong, nonatomic) UIButton *button;
+
+@property (strong, nonatomic) UITableView *tableView;
 @end
 
 @implementation ViewController
@@ -33,7 +35,12 @@
   [self.button setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
   [self.button addTarget:self action:@selector(buttonDidTap:) forControlEvents:UIControlEventTouchUpInside];
   [self.view addSubview:self.button];
-
+  
+  self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+  [self.view addSubview:self.tableView];
+  
+  self.tableView.delegate = self;
+  self.tableView.dataSource = self;
 }
 
 - (IBAction)deadlockApp:(id)sender
@@ -47,16 +54,21 @@
 {
   [super viewDidLayoutSubviews];
   
-  self.text.frame = CGRectMake(0, 0, 240, 80);
-  self.text.center = CGPointMake(self.view.center.x, self.view.center.y - 100);
+  CGRect frame = CGRectMake(0, 0, 240, 40);
+  frame.origin = CGPointMake(40, 120);
+  self.text.frame = frame;
 
-  self.label.frame = CGRectMake(0, 0, 240, 80);
-  self.label.center = self.view.center;
+  frame.origin = CGPointMake(40, 160);
+  self.label.frame = frame;
   
-  self.button.frame = CGRectMake(0, 0, 240, 80);
-  self.button.center = CGPointMake(self.view.center.x, self.view.center.y + 100);
+  frame.origin = CGPointMake(40, 200);
+  self.button.frame = frame;
   
   [self updateText];
+  
+  CGRect rect = CGRectMake(0, 320, self.view.frame.size.width, self.view.frame.size.height - 320);
+  self.tableView.frame = rect;
+  self.tableView.backgroundView.backgroundColor = [UIColor lightGrayColor];
 }
 
 - (void)updateText
@@ -90,6 +102,29 @@
   if (self.navigationController.childViewControllers.count > 1) {
     [self.navigationController popViewControllerAnimated:YES];
   }
+}
+
+#pragma mark -
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+  return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+  return 10;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+  return 44.0f;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+  UITableViewCell *cell = [[UITableViewCell alloc] init];
+  cell.textLabel.text = [NSString stringWithFormat:@"Cell %d", indexPath.row];
+  return cell;
 }
 
 @end
