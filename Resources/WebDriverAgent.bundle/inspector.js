@@ -22835,12 +22835,12 @@
 	  _createClass(Screen, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
-	      document.addEventListener('keydown', this.onKeyDown.bind(this), false);
+	      //document.addEventListener('keydown', this.onKeyDown.bind(this), false);
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
-	      document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
+	      //document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
 	    }
 	  }, {
 	    key: 'render',
@@ -22878,18 +22878,16 @@
 	  }, {
 	    key: 'gestureRecognizer',
 	    value: function gestureRecognizer() {
-	      var _this = this;
-
 	      if (!this._gestureRecognizer) {
 	        this._gestureRecognizer = new _jsGesture_recognizer2['default']({
 	          onClick: function onClick(ev) {
-	            _this.onScreenShotClick(ev);
+	            //this.onScreenShotClick(ev);
 	          },
 	          onDrag: function onDrag(params) {
-	            _this.onScreenShotDrag(params);
+	            //this.onScreenShotDrag(params);
 	          },
 	          onKeyDown: function onKeyDown(key) {
-	            _this.onScreenShotKeyDown(key);
+	            //this.onScreenShotKeyDown(key);
 	          }
 	        });
 	      }
@@ -22912,7 +22910,7 @@
 	  }, {
 	    key: 'onScreenShotDrag',
 	    value: function onScreenShotDrag(params) {
-	      var _this2 = this;
+	      var _this = this;
 
 	      var fromX = params.origin.x - document.getElementById('screenshot').offsetLeft;
 	      var fromY = params.origin.y - document.getElementById('screenshot').offsetTop;
@@ -22933,7 +22931,7 @@
 	          'toY': toY,
 	          'duration': params.duration
 	        }), function (tap_result) {
-	          _this2.props.refreshApp();
+	          _this.props.refreshApp();
 	        });
 	      });
 	    }
@@ -22947,7 +22945,7 @@
 	  }, {
 	    key: 'onScreenShotClick',
 	    value: function onScreenShotClick(point) {
-	      var _this3 = this;
+	      var _this2 = this;
 
 	      var x = point.x - document.getElementById('screenshot').offsetLeft;
 	      var y = point.y - document.getElementById('screenshot').offsetTop;
@@ -22961,21 +22959,21 @@
 	          'y': y
 	        }), function (tap_result) {
 	          _pubsubJs2['default'].publish('AddScriptCommandMessage', tap_result['value']['command']);
-	          _this3.props.refreshApp();
+	          _this2.props.refreshApp();
 	        });
 	      });
 	    }
 	  }, {
 	    key: 'onScreenShotKeyDown',
 	    value: function onScreenShotKeyDown(key) {
-	      var _this4 = this;
+	      var _this3 = this;
 
 	      _jsHttp2['default'].get('status', function (status_result) {
 	        var session_id = status_result.sessionId;
 	        _jsHttp2['default'].post('session/' + session_id + '/wda/keys', JSON.stringify({
 	          'value': [key]
 	        }), function (tap_result) {
-	          _this4.props.refreshApp();
+	          _this3.props.refreshApp();
 	        });
 	      });
 	    }
@@ -23002,30 +23000,22 @@
 	  }, {
 	    key: 'home',
 	    value: function home(ev) {
-	      var _this5 = this;
+	      var _this4 = this;
 
 	      _jsHttp2['default'].post('/wda/homescreen', JSON.stringify({}), function (result) {
-	        _this5.props.refreshApp();
+	        _this4.props.refreshApp();
 	      });
 	    }
 	  }, {
 	    key: 'renderScreenshot',
 	    value: function renderScreenshot() {
-	      var _this6 = this;
-
 	      return _react2['default'].createElement('img', {
 	        className: 'screen-screenshot',
 	        src: this.screenshot().source,
 	        style: this.styleWithScreenSize(),
-	        onMouseDown: function (ev) {
-	          return _this6.onMouseDown(ev);
-	        },
-	        onMouseMove: function (ev) {
-	          return _this6.onMouseMove(ev);
-	        },
-	        onMouseUp: function (ev) {
-	          return _this6.onMouseUp(ev);
-	        },
+	        // onMouseDown={(ev) => this.onMouseDown(ev)}
+	        // onMouseMove={(ev) => this.onMouseMove(ev)}
+	        // onMouseUp={(ev) => this.onMouseUp(ev)}
 	        draggable: 'false',
 	        id: 'screenshot'
 	      });
