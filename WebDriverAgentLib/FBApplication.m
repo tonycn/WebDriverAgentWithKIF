@@ -44,9 +44,13 @@
 
 - (NSDictionary *)fb_tree
 {
+    NSArray <NSString *> *windowsToIgnore = @[@"UITextEffectsWindow", @"UIRemoteKeyboardWindow"];
     NSArray <UIWindow *> *allWindows = UIApplication.sharedApplication.windows;
     NSMutableArray <NSDictionary *> *windows = [NSMutableArray array];
     for (UIWindow *window in allWindows) {
+        if ([windowsToIgnore containsObject:NSStringFromClass(window.class)]) {
+            continue;
+        }
         NSDictionary *viewDict = [UIView fb_dictionaryForView:window];
         [windows addObject:viewDict];
     }
@@ -76,7 +80,7 @@
     return UIApplication.sharedApplication.keyWindow;
 }
 
-- (void)fb_dismissKeyboard
+- (void)dismissKeyboard
 {
   for (UIWindow *window in self.fb_windows) {
     if ([window.firstResponder canResignFirstResponder]) {

@@ -25771,6 +25771,34 @@
 	              return _this.assert(_this.state.selectedNode);
 	            } },
 	          'Assert'
+	        ),
+	        _react2['default'].createElement(
+	          Button,
+	          { onClick: function (event) {
+	              return _this.inputText(_this.state.selectedNode);
+	            } },
+	          'Text'
+	        ),
+	        _react2['default'].createElement(
+	          Button,
+	          { onClick: function (event) {
+	              return _this.hideKeyboard();
+	            } },
+	          'Hide Keyboard'
+	        ),
+	        _react2['default'].createElement(
+	          Button,
+	          { onClick: function (event) {
+	              return _this.scroll(_this.state.selectedNode);
+	            } },
+	          'Scroll'
+	        ),
+	        _react2['default'].createElement(
+	          Button,
+	          { onClick: function (event) {
+	              return _this.drag(_this.state.selectedNode);
+	            } },
+	          'Drag'
 	        )
 	      );
 
@@ -25899,6 +25927,18 @@
 	        });
 	      });
 	    }
+	  }, {
+	    key: 'inputText',
+	    value: function inputText(node) {}
+	  }, {
+	    key: 'hideKeyboard',
+	    value: function hideKeyboard() {}
+	  }, {
+	    key: 'scroll',
+	    value: function scroll(node) {}
+	  }, {
+	    key: 'drag',
+	    value: function drag(node) {}
 	  }, {
 	    key: 'execute',
 	    value: function execute(content) {

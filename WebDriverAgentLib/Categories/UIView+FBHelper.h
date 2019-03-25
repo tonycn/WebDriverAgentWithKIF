@@ -40,10 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)fb_label;
 
 // window frame
-- (CGRect)wdFrame;
+- (CGRect)fb_wdFrame;
 
 // window frame rect dictionary
-- (NSDictionary *)wdRect;
+- (NSDictionary *)fb_wdRect;
 
 - (BOOL)fb_checkIfEnabled;
 
@@ -51,4 +51,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+
+@interface UIView (FBEditorHelper)
+
+- (BOOL)fb_isTextEditor;
+
+@end
 NS_ASSUME_NONNULL_END

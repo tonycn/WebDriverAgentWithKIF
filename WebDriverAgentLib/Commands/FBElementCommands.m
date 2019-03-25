@@ -29,6 +29,7 @@
 #import "FBResponseFuturePayload.h"
 #import "UIView-KIFAdditions.h"
 #import "KIFTypist.h"
+#import "FBUIDismissKeyboardCommand.h"
 
 @interface FBElementCommands ()
 @end
@@ -49,6 +50,7 @@
     
     [[FBRoute POST:@"/command"] respondWithTarget:self action:@selector(handleCommand:)],
     [[FBRoute POST:@"/keys"] respondWithTarget:self action:@selector(handleKeys:)],
+    [[FBRoute POST:@"/keyboard/dismiss"] respondWithTarget:self action:@selector(handleKeyboardDismiss:)],
 
     [[FBRoute POST:@"/wda/tap/:uuid"] respondWithTarget:self action:@selector(handleTap:)],
 
@@ -73,7 +75,7 @@
 {
   FBElementCache *elementCache = request.session.elementCache;
   UIView *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-  return FBResponseWithStatus(FBCommandStatusNoError, element.wdRect);
+  return FBResponseWithStatus(FBCommandStatusNoError, element.fb_wdRect);
 }
 
 + (id<FBResponsePayload>)handleClick:(FBRouteRequest *)request
@@ -197,6 +199,13 @@
   NSUInteger frequency = [request.arguments[@"frequency"] unsignedIntegerValue] ?: [FBConfiguration maxTypingFrequency];
   [KIFTypist enterCharacter:textToType];
   return FBResponseWithOK();
+}
+
++ (id<FBResponsePayload>)handleKeyboardDismiss:(FBRouteRequest *)request
+{
+  FBUIBaseCommand *command = [[FBUIDismissKeyboardCommand alloc] init];
+  id<FBResponsePayload> payload = FBResponseWithObject(@{@"command": command.toDictionary});
+  return FBResponseWithObject(payload);
 }
 
 + (id<FBResponsePayload>)handleGetWindowSize:(FBRouteRequest *)request

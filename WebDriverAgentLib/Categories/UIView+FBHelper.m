@@ -32,10 +32,16 @@
   info[@"label"] = [view fb_label];
   info[@"classChain"] = [chainWithSlash stringByAppendingString:[view fb_generateElementQuery]];
   info[@"ELEMENT"] = [view fb_uuid];
-  info[@"rect"] =  [self fb_formattedRectWithFrame:view.wdFrame];
-  info[@"frame"] = NSStringFromCGRect(CGRectIntegral(view.wdFrame));
+  info[@"rect"] =  [self fb_formattedRectWithFrame:view.fb_wdFrame];
+  info[@"frame"] = NSStringFromCGRect(CGRectIntegral(view.fb_wdFrame));
   info[@"isEnabled"] = [@([view fb_checkIfEnabled]) stringValue];
   info[@"isVisible"] = [@(![view isHidden]) stringValue];
+  if ([view fb_isTextEditor]) {
+    info[@"isInput"] = @(YES);
+  }
+  if ([view isKindOfClass:[UIScrollView class]]) {
+    info[@"isScrollable"] = @(YES);
+  }
   
   NSArray <UIView *> *childElements = view.subviews;
   if ([childElements count]) {
@@ -254,7 +260,7 @@
 {
   if ([self isKindOfClass:[UITableViewCell class]]) {
     UITableViewCell *cell = (id)self;
-    UITableView *tableView = [self findSuperViewOfClass:UITableView.class];
+    UITableView *tableView = [self fb_findSuperViewOfClass:UITableView.class];
     if (tableView) {
       NSIndexPath *indexPath = [tableView indexPathForCell:cell];
       return 10000 * indexPath.section + indexPath.row + 1;
@@ -262,7 +268,7 @@
   }
   if ([self isKindOfClass:[UICollectionViewCell class]]) {
     UICollectionViewCell *cell = (id)self;
-    UICollectionView *collectionView = [self findSuperViewOfClass:UICollectionView.class];
+    UICollectionView *collectionView = [self fb_findSuperViewOfClass:UICollectionView.class];
     if (collectionView) {
       NSIndexPath *indexPath = [collectionView indexPathForCell:cell];
       return 10000 * indexPath.section + indexPath.row + 1;
@@ -300,15 +306,15 @@
   }
 }
 
-- (CGRect)wdFrame
+- (CGRect)fb_wdFrame
 {
   CGRect windowFrame = [self.window convertRect:self.bounds fromView:self];
   return windowFrame;
 }
 
-- (NSDictionary *)wdRect
+- (NSDictionary *)fb_wdRect
 {
-  CGRect frame = self.wdFrame;
+  CGRect frame = self.fb_wdFrame;
   return @{
            @"x": @(CGRectGetMinX(frame)),
            @"y": @(CGRectGetMinY(frame)),
@@ -327,7 +333,7 @@
   return YES;
 }
 
-- (UIView *)findSuperViewOfClass:(Class)viewClass
+- (UIView *)fb_findSuperViewOfClass:(Class)viewClass
 {
   UIView *superView = self.superview;
   while (superView) {
@@ -337,6 +343,16 @@
     superView = superView.superview;
   }
   return nil;
+}
+
+@end
+
+@implementation UIView (FBEditorHelper)
+
+- (BOOL)fb_isTextEditor
+{
+  return [self isKindOfClass:UITextView.class]
+  || [self isKindOfClass:UITextField.class];
 }
 
 @end

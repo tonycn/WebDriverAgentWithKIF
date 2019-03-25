@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (UIWindow *)fb_keyWindow;
 
-- (void)fb_dismissKeyboard;
+- (void)dismissKeyboard;
 
 - (CGRect)wdFrame;
 

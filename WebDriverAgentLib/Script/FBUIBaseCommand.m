@@ -30,27 +30,31 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
     return self;
 }
 
-- (void)waitUntilElement:(void (^)(UIView *element))resultBlock
+- (void)waitUntilElement:(void (^)(UIView * _Nullable element))resultBlock
 {
   [self.class findElementByClassChain:self.path shouldReturnAfterFirstMatch:YES timeout:self.timeout elementsDidFind:^(NSArray<UIView *> * _Nonnull elements) {
     resultBlock(elements.firstObject);
   }];
 }
 
-- (BOOL)executeOn:(UIView *)element
+- (BOOL)executeOn:(UIView * _Nullable)element
 {
   return NO;
 }
 
-- (void)executeWithResultBlock:(void (^)(BOOL succ, UIView *element))resultBlock
+- (void)executeWithResultBlock:(void (^)(BOOL succ, UIView * _Nullable element))resultBlock
 {
-  [self waitUntilElement:^(UIView * _Nullable element) {
-    if (element) {
-      resultBlock([self executeOn:element], element);
-    } else {
-      resultBlock(NO, nil);
-    }
-  }];
+  if (self.elementIgnored) {
+    resultBlock([self executeOn:nil], nil);
+  } else {
+    [self waitUntilElement:^(UIView * _Nullable element) {
+      if (element) {
+        resultBlock([self executeOn:element], element);
+      } else {
+        resultBlock(NO, nil);
+      }
+    }];
+  }
 }
 
 - (NSDictionary *)toDictionary

@@ -9,6 +9,7 @@
 
 #import "FBUIAssertCommand.h"
 #import "FBUITapElementCommand.h"
+#import "FBUIDismissKeyboardCommand.h"
 
 @implementation FBUITestScript
 
@@ -56,6 +57,8 @@
     command = [[FBUITapElementCommand alloc] init];
   } else if ([actionStr isEqualToString:[FBUIAssertCommand actionString]]) {
     command = [[FBUIAssertCommand alloc] init];
+  } else if ([actionStr isEqualToString:[FBUIDismissKeyboardCommand actionString]]) {
+    command = [[FBUIDismissKeyboardCommand alloc] init];
   } else {
     // Not supported
     command = [[FBUIBaseCommand alloc] init];

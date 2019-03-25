@@ -67,6 +67,18 @@ class Inspector extends React.Component {
         <Button onClick={(event) => this.assert(this.state.selectedNode)}>
           Assert
         </Button>
+        <Button onClick={(event) => this.inputText(this.state.selectedNode)}>
+          Text
+        </Button>
+        <Button onClick={(event) => this.hideKeyboard()}>
+          Hide Keyboard
+        </Button>
+        <Button onClick={(event) => this.scroll(this.state.selectedNode)}>
+          Scroll
+        </Button>
+        <Button onClick={(event) => this.drag(this.state.selectedNode)}>
+          Drag
+        </Button>
       </span>
  
 
@@ -177,7 +189,35 @@ class Inspector extends React.Component {
       },
     );
   }
+  inputText(node) {
 
+  }
+
+  hideKeyboard() {
+    HTTP.get(
+      'status', (status_result) => {
+        var session_id = status_result.sessionId;
+        HTTP.post(
+          'session/' + session_id + '/keyboard/dismiss',
+          JSON.stringify({}),
+          (result) => {
+            PubSub.publish('AddScriptCommandMessage', result['value']['command']);
+            setTimeout(function () {
+              this.props.refreshApp();
+            }.bind(this), 1000)
+          },
+        );
+      },
+    );
+  }
+
+  scroll(node) {
+
+  }
+
+  drag(node) {
+
+  }
   execute(content) {
     this.setState({
       selectedNode: null

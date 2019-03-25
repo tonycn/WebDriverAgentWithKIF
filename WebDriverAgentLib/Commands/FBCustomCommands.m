@@ -62,7 +62,7 @@
 
 + (id<FBResponsePayload>)handleDismissKeyboardCommand:(FBRouteRequest *)request
 {
-  [request.session.application fb_dismissKeyboard];
+  [request.session.application dismissKeyboard];
   return FBResponseWithOK();
 }
 
