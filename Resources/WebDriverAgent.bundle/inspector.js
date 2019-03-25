@@ -25850,7 +25850,9 @@
 	        'div',
 	        { className: 'section-content', style: { height: '40%' } },
 	        headerDiv,
-	        _react2['default'].createElement('textarea', { className: 'inspector-script-text', value: this.state.script, onChange: function (event) {
+	        _react2['default'].createElement('textarea', { className: 'inspector-script-text',
+	          value: this.state.script,
+	          onChange: function (event) {
 	            _this2.handleScriptChange(event);
 	          } })
 	      );
@@ -25910,6 +25912,8 @@
 	  }, {
 	    key: 'execute',
 	    value: function execute(content) {
+	      var _this5 = this;
+
 	      this.setState({
 	        selectedNode: null
 	      });
@@ -25919,6 +25923,9 @@
 	          script: content
 	        }), function (result) {
 	          console.log(result);
+	          setTimeout((function () {
+	            this.props.refreshApp();
+	          }).bind(_this5), 1000);
 	        });
 	      });
 	    }

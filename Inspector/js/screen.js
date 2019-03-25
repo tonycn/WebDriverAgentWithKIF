@@ -20,11 +20,11 @@ require('css/screen.css');
 
 class Screen extends React.Component {
   componentWillMount() {
-     document.addEventListener('keydown', this.onKeyDown.bind(this), false);
+     //document.addEventListener('keydown', this.onKeyDown.bind(this), false);
   }
 
   componentWillUnmount() {
-      document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
+      //document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
   }
 
   render() {
@@ -53,13 +53,13 @@ class Screen extends React.Component {
     if (!this._gestureRecognizer) {
       this._gestureRecognizer = new GestureRecognizer({
         onClick: (ev) => {
-          this.onScreenShotClick(ev);
+          //this.onScreenShotClick(ev);
         },
         onDrag: (params) => {
-          this.onScreenShotDrag(params);
+          //this.onScreenShotDrag(params);
         },
         onKeyDown: (key) => {
-          this.onScreenShotKeyDown(key);
+          //this.onScreenShotKeyDown(key);
         },
       });
     }
@@ -188,9 +188,9 @@ class Screen extends React.Component {
         className="screen-screenshot"
         src={this.screenshot().source}
         style={this.styleWithScreenSize()}
-        onMouseDown={(ev) => this.onMouseDown(ev)}
-        onMouseMove={(ev) => this.onMouseMove(ev)}
-        onMouseUp={(ev) => this.onMouseUp(ev)}
+        // onMouseDown={(ev) => this.onMouseDown(ev)}
+        // onMouseMove={(ev) => this.onMouseMove(ev)}
+        // onMouseUp={(ev) => this.onMouseUp(ev)}
         draggable="false"
         id="screenshot"
       />
