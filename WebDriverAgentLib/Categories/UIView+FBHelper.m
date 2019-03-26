@@ -101,7 +101,11 @@
   UIView *currentRoot = self;
   BOOL matched = [currentRoot fb_matchClassChainItem:chainItem];
   if (chainIndex + 1 == lookupChain.count) {
-    return matched ? @[currentRoot] : nil;
+    if (matched) {
+      return @[currentRoot];
+    } else if (!chainItem.isDescendant) {
+      return nil;
+    }
   }
   NSMutableArray *elementsFound = [NSMutableArray array];
   for (UIView *subView in currentRoot.subviews) {

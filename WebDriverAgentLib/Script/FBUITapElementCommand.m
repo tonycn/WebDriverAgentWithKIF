@@ -16,13 +16,14 @@
 
 @implementation FBUITapElementCommand
 
-- (BOOL)executeOn:(UIView *)element
+- (void)executeOn:(UIView * _Nullable)element
+      finishBlock:(void (^)(BOOL))finishBlock
 {
   if (element) {
     [element tap];
-    return YES;
+    finishBlock(YES);
   } else {
-    return NO;
+    finishBlock(NO);
   }
 }
 

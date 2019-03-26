@@ -9,9 +9,10 @@
 
 @implementation FBUIAssertCommand
 
-- (BOOL)executeOn:(UIView *)element
+- (void)executeOn:(UIView * _Nullable)element
+      finishBlock:(void (^)(BOOL))finishBlock
 {
-  return element != nil;
+  finishBlock(element != nil);
 }
 
 + (NSString *)actionString

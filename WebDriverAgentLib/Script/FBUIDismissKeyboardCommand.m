@@ -21,10 +21,11 @@
     return self;
 }
 
-- (BOOL)executeOn:(UIView *)element
+- (void)executeOn:(UIView * _Nullable)element
+      finishBlock:(void (^)(BOOL))finishBlock
 {
     [[FBApplication fb_activeApplication] dismissKeyboard];
-    return YES;
+    finishBlock(YES);
 }
 
 + (NSString *)actionString

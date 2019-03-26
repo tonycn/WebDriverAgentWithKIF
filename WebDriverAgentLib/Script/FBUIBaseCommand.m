@@ -25,31 +25,36 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
 {
     self = [super init];
     if (self) {
-        self.timeout = 1.0;
     }
     return self;
 }
 
 - (void)waitUntilElement:(void (^)(UIView * _Nullable element))resultBlock
 {
-  [self.class findElementByClassChain:self.path shouldReturnAfterFirstMatch:YES timeout:self.timeout elementsDidFind:^(NSArray<UIView *> * _Nonnull elements) {
+  const NSTimeInterval defaultTimeout = 1;
+  [self.class findElementByClassChain:self.path shouldReturnAfterFirstMatch:YES timeout:1 elementsDidFind:^(NSArray<UIView *> * _Nonnull elements) {
     resultBlock(elements.firstObject);
   }];
 }
 
-- (BOOL)executeOn:(UIView * _Nullable)element
+- (void)executeOn:(UIView * _Nullable)element
+      finishBlock:(void (^)(BOOL))finishBlock
 {
-  return NO;
+  finishBlock(NO);
 }
 
 - (void)executeWithResultBlock:(void (^)(BOOL succ, UIView * _Nullable element))resultBlock
 {
   if (self.elementIgnored) {
-    resultBlock([self executeOn:nil], nil);
+    [self executeOn:nil finishBlock:^(BOOL succ) {
+      resultBlock(succ, nil);
+    }];
   } else {
     [self waitUntilElement:^(UIView * _Nullable element) {
       if (element) {
-        resultBlock([self executeOn:element], element);
+        [self executeOn:element finishBlock:^(BOOL succ) {
+          resultBlock(succ, nil);
+        }];
       } else {
         resultBlock(NO, nil);
       }
@@ -64,7 +69,6 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
     if (self.path.length > 0) {
         [dict setObject:self.path forKey:@"path"];
     }
-    [dict setObject:@(self.timeout) forKey:@"timeout"];
     return dict;
 }
 

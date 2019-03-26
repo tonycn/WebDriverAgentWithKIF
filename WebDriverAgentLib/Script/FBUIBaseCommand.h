@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSString *action;
 @property (nonatomic, strong, nullable) NSString *path; // classChain
-@property (nonatomic) NSTimeInterval timeout;
+//@property (nonatomic) NSTimeInterval timeout;
 @property (nonatomic, strong, nullable) NSDictionary *originCommandDict;
 
 @property (nonatomic) BOOL elementIgnored;
@@ -26,7 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)waitUntilElement:(void (^)(UIView * _Nullable element ))resultBlock;
 
 // Step 2
-- (BOOL)executeOn:(UIView * _Nullable)element;
+- (void)executeOn:(UIView * _Nullable)element
+      finishBlock:(void (^)(BOOL))finishBlock;
 
 - (void)executeWithResultBlock:(void (^)(BOOL succ, UIView * _Nullable element))resultBlock;
 

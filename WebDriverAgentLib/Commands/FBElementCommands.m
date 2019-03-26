@@ -109,6 +109,10 @@
   command.y = y;
   command.until = until;
   
+  if (command.x < 1 && command.y < 1) {
+    return FBResponseWithErrorFormat(@"Unsupported scroll type");
+  }
+  
   [command waitUntilElement:^(UIView * _Nullable element) {
     UIScrollView *scrollView = nil;
     if ([element isKindOfClass:UIScrollView.class]) {
@@ -116,14 +120,15 @@
     } else {
       scrollView = (id)[element fb_findSuperViewOfClass:UIScrollView.class];
     }
-    BOOL succ = [command executeOn:scrollView];
-    if (succ) {
-      [command reducePathIfPossibleForElement:scrollView];
-      id<FBResponsePayload> payload = FBResponseWithObject(command.toResponsePayloadObject);
-      [future fillRealResponsePayload:payload];
-    } else {
-      [future fillRealResponsePayload:FBResponseWithErrorFormat(@"Unsupported scroll type")];
-    }
+    [command executeOn:scrollView finishBlock:^(BOOL succ) {
+      if (succ) {
+        [command reducePathIfPossibleForElement:scrollView];
+        id<FBResponsePayload> payload = FBResponseWithObject(command.toResponsePayloadObject);
+        [future fillRealResponsePayload:payload];
+      } else {
+        [future fillRealResponsePayload:FBResponseWithErrorFormat(@"Unsupported scroll type")];
+      }
+    }];
   }];
   return future;
 }
@@ -195,7 +200,10 @@
   [command waitUntilElement:^(UIView * _Nullable element) {
     if (element) {
       [command reducePathIfPossibleForElement:element];
-      [command executeOn:element];
+      [command executeOn:element finishBlock:^(BOOL succ) {
+        id<FBResponsePayload> payload = FBResponseWithObject(command.toResponsePayloadObject);
+        [future fillRealResponsePayload:payload];
+      }];
       id<FBResponsePayload> payload = FBResponseWithObject(command.toResponsePayloadObject);
       [future fillRealResponsePayload:payload];
     } else {
@@ -216,7 +224,9 @@
 + (id<FBResponsePayload>)handleKeyboardDismiss:(FBRouteRequest *)request
 {
   FBUIBaseCommand *command = [[FBUIDismissKeyboardCommand alloc] init];
-  [command executeOn:nil];
+  [command executeOn:nil finishBlock:^(BOOL succ) {
+    // log succ or not
+  }];
   id<FBResponsePayload> payload = FBResponseWithObject(command.toResponsePayloadObject);
   return payload;
 }

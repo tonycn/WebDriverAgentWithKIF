@@ -69,9 +69,6 @@
   command.action = actionStr;
   // 兼容 path 和 classChain
   command.path = commandDict[@"path"];
-  if (commandDict[@"timeout"]) {
-    command.timeout = [commandDict[@"timeout"] doubleValue];
-  }
   command.originCommandDict = commandDict;
   return command;
 }

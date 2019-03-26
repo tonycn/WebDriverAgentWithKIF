@@ -212,11 +212,7 @@ class Inspector extends React.Component {
   scroll(node) {
     let x = window.prompt('Scroll horizontal by distance x =', 0)
     let y = window.prompt('Scroll vertical by distance y =', 0)
-    let scrollUntilNextElement = window.prompt('Keep scrolling until next elememnt appears.')
-    var findElement;
-    if (scrollUntilNextElement) {
-      findElement = window.prompt('Find element by path:')
-    }
+    let findElement = window.prompt('Keep scrolling until next elememnt appears.')
     HTTP.get(
       'status', (status_result) => {
         var session_id = status_result.sessionId;
@@ -230,6 +226,7 @@ class Inspector extends React.Component {
           }),
           (result) => {
             console.log(result)
+            PubSub.publish('AddScriptCommandMessage', result['value']['command']);
             setTimeout(function () {
               this.props.refreshApp();
             }.bind(this), 1000)

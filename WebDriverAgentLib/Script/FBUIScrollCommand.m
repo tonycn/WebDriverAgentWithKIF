@@ -21,27 +21,56 @@
   return self;
 }
 
-- (BOOL)executeOn:(UIView *)element
+- (void)executeOn:(UIView * _Nullable)element
+      finishBlock:(void (^)(BOOL))finishBlock
 {
   NSAssert([element isKindOfClass:UIScrollView.class], @"Should be scroll view");
   if ([element isKindOfClass:UIScrollView.class]) {
-    while (YES) {
-      NSArray *elementsDidFind = [self.class findElementsByClassChain:self.until shouldReturnAfterFirstMatch:YES];
-      if (elementsDidFind.count > 0) {
-        return YES;
-      }
+    if (self.until.length > 0) {
+      [self.class scroll:(id)element
+                byOffset:CGPointMake(self.x, self.y)
+                   until:self.until
+                 didFind:^(UIView * _Nullable element) {
+        finishBlock(element != nil);
+      }];
+    } else {
       UIScrollView *scrollView = (id)element;
       CGPoint contentOffset = scrollView.contentOffset;
       contentOffset.x += self.x;
       contentOffset.y += self.y;
       [scrollView setContentOffset:contentOffset];
-      if (contentOffset.x + scrollView.bounds.size.width > scrollView.contentSize.width
-          && contentOffset.y + scrollView.bounds.size.height > scrollView.contentSize.height) {
-        break;
+      finishBlock(YES);
+      return;
+    }
+  } else {
+    finishBlock(NO);
+  }
+}
+
++ (void)scroll:(UIScrollView *)scrollView
+      byOffset:(CGPoint)offset
+         until:(NSString *)until
+       didFind:(void (^)(UIView * _Nullable))didFindBlock
+{
+  CGPoint contentOffset = scrollView.contentOffset;
+  contentOffset.x += offset.x;
+  contentOffset.y += offset.y;
+  [scrollView setContentOffset:contentOffset];
+  
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    NSArray *elements = [self findElementsByClassChain:until shouldReturnAfterFirstMatch:YES];
+    if (elements.count > 0) {
+      didFindBlock(elements.firstObject);
+      return;
+    } else {
+      if (contentOffset.x + scrollView.bounds.size.width >= scrollView.contentSize.width
+          && contentOffset.y + scrollView.bounds.size.height >= scrollView.contentSize.height) {
+        didFindBlock(nil);
+      } else {
+        [self scroll:scrollView byOffset:offset until:until didFind:didFindBlock];
       }
     }
-  }
-  return NO;
+  });
 }
 
 - (NSDictionary *)toDictionary

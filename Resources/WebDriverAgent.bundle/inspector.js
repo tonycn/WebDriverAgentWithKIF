@@ -25946,11 +25946,7 @@
 
 	      var x = window.prompt('Scroll horizontal by distance x =', 0);
 	      var y = window.prompt('Scroll vertical by distance y =', 0);
-	      var scrollUntilNextElement = window.prompt('Keep scrolling until next elememnt appears.');
-	      var findElement;
-	      if (scrollUntilNextElement) {
-	        findElement = window.prompt('Find element by path:');
-	      }
+	      var findElement = window.prompt('Keep scrolling until next elememnt appears.');
 	      _jsHttp2['default'].get('status', function (status_result) {
 	        var session_id = status_result.sessionId;
 	        _jsHttp2['default'].post('session/' + session_id + '/scroll', JSON.stringify({
@@ -25960,6 +25956,7 @@
 	          until: findElement ? findElement : ""
 	        }), function (result) {
 	          console.log(result);
+	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
 	          setTimeout((function () {
 	            this.props.refreshApp();
 	          }).bind(_this6), 1000);
