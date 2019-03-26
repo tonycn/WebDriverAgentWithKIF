@@ -30,6 +30,7 @@
 #import "UIView-KIFAdditions.h"
 #import "KIFTypist.h"
 #import "FBUIDismissKeyboardCommand.h"
+#import "FBUIScrollCommand.h"
 
 @interface FBElementCommands ()
 @end
@@ -43,18 +44,16 @@
   return
   @[
     [[FBRoute GET:@"/window/size"] respondWithTarget:self action:@selector(handleGetWindowSize:)],
-    [[FBRoute GET:@"/element/:uuid/rect"] respondWithTarget:self action:@selector(handleGetRect:)],
     [[FBRoute POST:@"/element/:uuid/click"] respondWithTarget:self action:@selector(handleClick:)],
     [[FBRoute POST:@"/element/:uuid/clear"] respondWithTarget:self action:@selector(handleClear:)],
-    [[FBRoute GET:@"/element/:uuid/screenshot"] respondWithTarget:self action:@selector(handleElementScreenshot:)],
-    
+ 
     [[FBRoute POST:@"/command"] respondWithTarget:self action:@selector(handleCommand:)],
     [[FBRoute POST:@"/keys"] respondWithTarget:self action:@selector(handleKeys:)],
     [[FBRoute POST:@"/keyboard/dismiss"] respondWithTarget:self action:@selector(handleKeyboardDismiss:)],
+    [[FBRoute POST:@"/scroll"] respondWithTarget:self action:@selector(handleScroll:)],
 
     [[FBRoute POST:@"/wda/tap/:uuid"] respondWithTarget:self action:@selector(handleTap:)],
-
-//    [[FBRoute POST:@"/wda/element/:uuid/scroll"] respondWithTarget:self action:@selector(handleScroll:)],
+    
 //    [[FBRoute POST:@"/wda/element/:uuid/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDrag:)],
 //    [[FBRoute POST:@"/wda/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDragCoordinate:)],
   ];
@@ -62,21 +61,6 @@
 
 
 #pragma mark - Commands
-
-+ (id<FBResponsePayload>)handleGetEnabled:(FBRouteRequest *)request
-{
-  FBElementCache *elementCache = request.session.elementCache;
-  UIView *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-  BOOL isEnabled = [element fb_checkIfEnabled];
-  return FBResponseWithStatus(FBCommandStatusNoError, isEnabled ? @YES : @NO);
-}
-
-+ (id<FBResponsePayload>)handleGetRect:(FBRouteRequest *)request
-{
-  FBElementCache *elementCache = request.session.elementCache;
-  UIView *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
-  return FBResponseWithStatus(FBCommandStatusNoError, element.fb_wdRect);
-}
 
 + (id<FBResponsePayload>)handleClick:(FBRouteRequest *)request
 {
@@ -113,7 +97,35 @@
 
 + (id<FBResponsePayload>)handleScroll:(FBRouteRequest *)request
 {
-  return FBResponseWithErrorFormat(@"Unsupported scroll type");
+  CGFloat x = [request.arguments[@"x"] floatValue];
+  CGFloat y = [request.arguments[@"y"] floatValue];
+  NSString *until = request.arguments[@"until"];
+  NSString *onElement = request.arguments[@"on"];
+
+  FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
+  FBUIScrollCommand *command = [FBUITestScript generateCommandByAction:[FBUIScrollCommand actionString]
+                                                          classChain:onElement];
+  command.x = x;
+  command.y = y;
+  command.until = until;
+  
+  [command waitUntilElement:^(UIView * _Nullable element) {
+    UIScrollView *scrollView = nil;
+    if ([element isKindOfClass:UIScrollView.class]) {
+      scrollView = element;
+    } else {
+      scrollView = (id)[element fb_findSuperViewOfClass:UIScrollView.class];
+    }
+    BOOL succ = [command executeOn:scrollView];
+    if (succ) {
+      [command reducePathIfPossibleForElement:scrollView];
+      id<FBResponsePayload> payload = FBResponseWithObject(command.toResponsePayloadObject);
+      [future fillRealResponsePayload:payload];
+    } else {
+      [future fillRealResponsePayload:FBResponseWithErrorFormat(@"Unsupported scroll type")];
+    }
+  }];
+  return future;
 }
 
 + (id<FBResponsePayload>)handleDragCoordinate:(FBRouteRequest *)request
@@ -170,7 +182,7 @@
                                                           classChain:[element fb_generateElementClassChain]];
   [command reducePathIfPossibleForElement:element];
   [element tapAtPoint:tapPoint];
-  return  FBResponseWithObject(@{@"command": command.toDictionary});
+  return  FBResponseWithObject(command.toResponsePayloadObject);
 }
 
 + (id<FBResponsePayload>)handleCommand:(FBRouteRequest *)request
@@ -184,7 +196,7 @@
     if (element) {
       [command reducePathIfPossibleForElement:element];
       [command executeOn:element];
-      id<FBResponsePayload> payload = FBResponseWithObject(@{@"command": command.toDictionary});
+      id<FBResponsePayload> payload = FBResponseWithObject(command.toResponsePayloadObject);
       [future fillRealResponsePayload:payload];
     } else {
       [future fillRealResponsePayload:FBResponseWithStatus(FBCommandStatusNoSuchElement, request.arguments)];
@@ -204,8 +216,9 @@
 + (id<FBResponsePayload>)handleKeyboardDismiss:(FBRouteRequest *)request
 {
   FBUIBaseCommand *command = [[FBUIDismissKeyboardCommand alloc] init];
-  id<FBResponsePayload> payload = FBResponseWithObject(@{@"command": command.toDictionary});
-  return FBResponseWithObject(payload);
+  [command executeOn:nil];
+  id<FBResponsePayload> payload = FBResponseWithObject(command.toResponsePayloadObject);
+  return payload;
 }
 
 + (id<FBResponsePayload>)handleGetWindowSize:(FBRouteRequest *)request

@@ -10,6 +10,7 @@
 #import "FBUIAssertCommand.h"
 #import "FBUITapElementCommand.h"
 #import "FBUIDismissKeyboardCommand.h"
+#import "FBUIScrollCommand.h"
 
 @implementation FBUITestScript
 
@@ -59,6 +60,8 @@
     command = [[FBUIAssertCommand alloc] init];
   } else if ([actionStr isEqualToString:[FBUIDismissKeyboardCommand actionString]]) {
     command = [[FBUIDismissKeyboardCommand alloc] init];
+  } else if ([actionStr isEqualToString:[FBUIScrollCommand actionString]]) {
+    command = [[FBUIScrollCommand alloc] init];
   } else {
     // Not supported
     command = [[FBUIBaseCommand alloc] init];
@@ -66,7 +69,6 @@
   command.action = actionStr;
   // 兼容 path 和 classChain
   command.path = commandDict[@"path"];
-  command.props = commandDict[@"props"];
   if (commandDict[@"timeout"]) {
     command.timeout = [commandDict[@"timeout"] doubleValue];
   }

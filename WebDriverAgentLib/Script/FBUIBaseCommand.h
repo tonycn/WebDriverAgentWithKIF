@@ -17,7 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSString *action;
 @property (nonatomic, strong, nullable) NSString *path; // classChain
-@property (nonatomic, strong, nullable) NSDictionary *props;
 @property (nonatomic) NSTimeInterval timeout;
 @property (nonatomic, strong, nullable) NSDictionary *originCommandDict;
 
@@ -33,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 - (NSDictionary *)toDictionary;
+
+- (NSDictionary *)toResponsePayloadObject;
 
 - (void)reducePathIfPossibleForElement:(UIView *)element;
 

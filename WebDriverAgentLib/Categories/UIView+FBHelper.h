@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)fb_clearTextWithError:(NSError **)error;
 
+- (UIView *)fb_findSuperViewOfClass:(Class)viewClass;
+
 @end
 
 

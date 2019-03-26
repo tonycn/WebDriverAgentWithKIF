@@ -76,9 +76,6 @@ class Inspector extends React.Component {
         <Button onClick={(event) => this.scroll(this.state.selectedNode)}>
           Scroll
         </Button>
-        <Button onClick={(event) => this.drag(this.state.selectedNode)}>
-          Drag
-        </Button>
       </span>
  
 
@@ -201,6 +198,7 @@ class Inspector extends React.Component {
           'session/' + session_id + '/keyboard/dismiss',
           JSON.stringify({}),
           (result) => {
+            console.log(result)
             PubSub.publish('AddScriptCommandMessage', result['value']['command']);
             setTimeout(function () {
               this.props.refreshApp();
@@ -212,10 +210,38 @@ class Inspector extends React.Component {
   }
 
   scroll(node) {
-
+    let x = window.prompt('Scroll horizontal by distance x =', 0)
+    let y = window.prompt('Scroll vertical by distance y =', 0)
+    let scrollUntilNextElement = window.prompt('Keep scrolling until next elememnt appears.')
+    var findElement;
+    if (scrollUntilNextElement) {
+      findElement = window.prompt('Find element by path:')
+    }
+    HTTP.get(
+      'status', (status_result) => {
+        var session_id = status_result.sessionId;
+        HTTP.post(
+          'session/' + session_id + '/scroll',
+          JSON.stringify({
+            x: x,
+            y: y,
+            on: node.attributes.classChain,
+            until: findElement ? findElement  : ""
+          }),
+          (result) => {
+            console.log(result)
+            setTimeout(function () {
+              this.props.refreshApp();
+            }.bind(this), 1000)
+          },
+        );
+      },
+    );
   }
 
   drag(node) {
+    let x = window.prompt('Drag horizontal by distance x =')
+    let y = window.prompt('Drag vertical by distance y =')
 
   }
   execute(content) {

@@ -25792,13 +25792,6 @@
 	              return _this.scroll(_this.state.selectedNode);
 	            } },
 	          'Scroll'
-	        ),
-	        _react2['default'].createElement(
-	          Button,
-	          { onClick: function (event) {
-	              return _this.drag(_this.state.selectedNode);
-	            } },
-	          'Drag'
 	        )
 	      );
 
@@ -25932,17 +25925,57 @@
 	    value: function inputText(node) {}
 	  }, {
 	    key: 'hideKeyboard',
-	    value: function hideKeyboard() {}
+	    value: function hideKeyboard() {
+	      var _this5 = this;
+
+	      _jsHttp2['default'].get('status', function (status_result) {
+	        var session_id = status_result.sessionId;
+	        _jsHttp2['default'].post('session/' + session_id + '/keyboard/dismiss', JSON.stringify({}), function (result) {
+	          console.log(result);
+	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
+	          setTimeout((function () {
+	            this.props.refreshApp();
+	          }).bind(_this5), 1000);
+	        });
+	      });
+	    }
 	  }, {
 	    key: 'scroll',
-	    value: function scroll(node) {}
+	    value: function scroll(node) {
+	      var _this6 = this;
+
+	      var x = window.prompt('Scroll horizontal by distance x =', 0);
+	      var y = window.prompt('Scroll vertical by distance y =', 0);
+	      var scrollUntilNextElement = window.prompt('Keep scrolling until next elememnt appears.');
+	      var findElement;
+	      if (scrollUntilNextElement) {
+	        findElement = window.prompt('Find element by path:');
+	      }
+	      _jsHttp2['default'].get('status', function (status_result) {
+	        var session_id = status_result.sessionId;
+	        _jsHttp2['default'].post('session/' + session_id + '/scroll', JSON.stringify({
+	          x: x,
+	          y: y,
+	          on: node.attributes.classChain,
+	          until: findElement ? findElement : ""
+	        }), function (result) {
+	          console.log(result);
+	          setTimeout((function () {
+	            this.props.refreshApp();
+	          }).bind(_this6), 1000);
+	        });
+	      });
+	    }
 	  }, {
 	    key: 'drag',
-	    value: function drag(node) {}
+	    value: function drag(node) {
+	      var x = window.prompt('Drag horizontal by distance x =');
+	      var y = window.prompt('Drag vertical by distance y =');
+	    }
 	  }, {
 	    key: 'execute',
 	    value: function execute(content) {
-	      var _this5 = this;
+	      var _this7 = this;
 
 	      this.setState({
 	        selectedNode: null
@@ -25955,7 +25988,7 @@
 	          console.log(result);
 	          setTimeout((function () {
 	            this.props.refreshApp();
-	          }).bind(_this5), 1000);
+	          }).bind(_this7), 1000);
 	        });
 	      });
 	    }

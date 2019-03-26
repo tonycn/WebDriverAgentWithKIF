@@ -16,6 +16,7 @@
     self = [super init];
     if (self) {
         self.elementIgnored = YES;
+        self.action = [self.class actionString];
     }
     return self;
 }

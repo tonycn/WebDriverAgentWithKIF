@@ -64,11 +64,13 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
     if (self.path.length > 0) {
         [dict setObject:self.path forKey:@"path"];
     }
-    if (self.props) {
-        [dict setObject:self.props forKey:@"props"];
-    }
     [dict setObject:@(self.timeout) forKey:@"timeout"];
     return dict;
+}
+
+- (NSDictionary *)toResponsePayloadObject
+{
+  return @{@"command": self.toDictionary};
 }
 
 - (void)reducePathIfPossibleForElement:(UIView *)element
