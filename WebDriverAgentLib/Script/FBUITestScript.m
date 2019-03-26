@@ -55,21 +55,18 @@
   NSString *actionStr = commandDict[@"action"];
   FBUIBaseCommand *command = nil;
   if ([actionStr isEqualToString:[FBUITapElementCommand actionString]]) {
-    command = [[FBUITapElementCommand alloc] init];
+    command = [[FBUITapElementCommand alloc] initWithAttributes:commandDict];
   } else if ([actionStr isEqualToString:[FBUIAssertCommand actionString]]) {
-    command = [[FBUIAssertCommand alloc] init];
+    command = [[FBUIAssertCommand alloc] initWithAttributes:commandDict];
   } else if ([actionStr isEqualToString:[FBUIDismissKeyboardCommand actionString]]) {
-    command = [[FBUIDismissKeyboardCommand alloc] init];
+    command = [[FBUIDismissKeyboardCommand alloc] initWithAttributes:commandDict];
   } else if ([actionStr isEqualToString:[FBUIScrollCommand actionString]]) {
-    command = [[FBUIScrollCommand alloc] init];
+    FBUIScrollCommand *scrollCommand = [[FBUIScrollCommand alloc] initWithAttributes:commandDict];
+    command = scrollCommand;
   } else {
     // Not supported
     command = [[FBUIBaseCommand alloc] init];
   }
-  command.action = actionStr;
-  // 兼容 path 和 classChain
-  command.path = commandDict[@"path"];
-  command.originCommandDict = commandDict;
   return command;
 }
 

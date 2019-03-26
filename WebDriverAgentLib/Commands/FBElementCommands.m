@@ -100,7 +100,7 @@
   CGFloat x = [request.arguments[@"x"] floatValue];
   CGFloat y = [request.arguments[@"y"] floatValue];
   NSString *until = request.arguments[@"until"];
-  NSString *onElement = request.arguments[@"on"];
+  NSString *onElement = request.arguments[@"path"];
 
   FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
   FBUIScrollCommand *command = [FBUITestScript generateCommandByAction:[FBUIScrollCommand actionString]

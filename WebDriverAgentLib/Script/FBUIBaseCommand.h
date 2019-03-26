@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)executeWithResultBlock:(void (^)(BOOL succ, UIView * _Nullable element))resultBlock;
 
+- (instancetype)initWithAttributes:(NSDictionary *)attrs;
+
 #pragma mark -
 - (NSDictionary *)toDictionary;
 

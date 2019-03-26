@@ -11,12 +11,11 @@
 
 @implementation FBUIDismissKeyboardCommand
 
-- (instancetype)init
+- (instancetype)initWithAttributes:(NSDictionary *)attrs
 {
-    self = [super init];
+    self = [super initWithAttributes:attrs];
     if (self) {
         self.elementIgnored = YES;
-        self.action = [self.class actionString];
     }
     return self;
 }

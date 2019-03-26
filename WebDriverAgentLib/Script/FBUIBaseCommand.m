@@ -21,10 +21,12 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
 
 @implementation FBUIBaseCommand
 
-- (instancetype)init
-{
+- (instancetype)initWithAttributes:(NSDictionary *)attrs {
     self = [super init];
     if (self) {
+      self.action = attrs[@"action"];
+      self.path = attrs[@"path"];
+      self.originCommandDict = attrs;
     }
     return self;
 }

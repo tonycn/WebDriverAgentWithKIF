@@ -25952,7 +25952,7 @@
 	        _jsHttp2['default'].post('session/' + session_id + '/scroll', JSON.stringify({
 	          x: x,
 	          y: y,
-	          on: node.attributes.classChain,
+	          path: node.attributes.classChain,
 	          until: findElement ? findElement : ""
 	        }), function (result) {
 	          console.log(result);

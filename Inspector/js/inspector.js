@@ -211,7 +211,7 @@ class Inspector extends React.Component {
 
   scroll(node) {
     let x = window.prompt('Scroll horizontal by distance x =', 0)
-    let y = window.prompt('Scroll vertical by distance y =', 0)
+    let y = window.prompt('Scroll vertical by distance y =', 44)
     let findElement = window.prompt('Keep scrolling until next elememnt appears.')
     HTTP.get(
       'status', (status_result) => {
@@ -221,7 +221,7 @@ class Inspector extends React.Component {
           JSON.stringify({
             x: x,
             y: y,
-            on: node.attributes.classChain,
+            path: node.attributes.classChain,
             until: findElement ? findElement  : ""
           }),
           (result) => {
