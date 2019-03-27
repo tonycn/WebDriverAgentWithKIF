@@ -156,7 +156,7 @@ class Inspector extends React.Component {
           'session/' + session_id + '/command',
           JSON.stringify({
             action: 'tap',
-            classChain: node.attributes.classChain
+            path: node.attributes.classChain
           }),
           (result) => {
             PubSub.publish('AddScriptCommandMessage', result['value']['command']);
@@ -177,7 +177,7 @@ class Inspector extends React.Component {
           'session/' + session_id + '/command',
           JSON.stringify({
             action: 'assert',
-            classChain: node.attributes.classChain
+            path: node.attributes.classChain
           }),
           (result) => {
             PubSub.publish('AddScriptCommandMessage', result['value']['command']);
@@ -247,7 +247,8 @@ class Inspector extends React.Component {
         HTTP.post(
           'session/' + session_id + '/longPress',
           JSON.stringify({
-            duration: duration
+            duration: duration,
+            path: node.attributes.classChain
           }),
           (result) => {
             console.log(result)

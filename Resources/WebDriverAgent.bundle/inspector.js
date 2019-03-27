@@ -25792,6 +25792,13 @@
 	              return _this.scroll(_this.state.selectedNode);
 	            } },
 	          'Scroll'
+	        ),
+	        _react2['default'].createElement(
+	          Button,
+	          { onClick: function (event) {
+	              return _this.longPress(_this.state.selectedNode);
+	            } },
+	          'Long press'
 	        )
 	      );
 
@@ -25892,7 +25899,7 @@
 	        var session_id = status_result.sessionId;
 	        _jsHttp2['default'].post('session/' + session_id + '/command', JSON.stringify({
 	          action: 'tap',
-	          classChain: node.attributes.classChain
+	          path: node.attributes.classChain
 	        }), function (result) {
 	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
 	          setTimeout((function () {
@@ -25911,7 +25918,7 @@
 	        var session_id = status_result.sessionId;
 	        _jsHttp2['default'].post('session/' + session_id + '/command', JSON.stringify({
 	          action: 'assert',
-	          classChain: node.attributes.classChain
+	          path: node.attributes.classChain
 	        }), function (result) {
 	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
 	          setTimeout((function () {
@@ -25945,7 +25952,7 @@
 	      var _this6 = this;
 
 	      var x = window.prompt('Scroll horizontal by distance x =', 0);
-	      var y = window.prompt('Scroll vertical by distance y =', 0);
+	      var y = window.prompt('Scroll vertical by distance y =', 44);
 	      var findElement = window.prompt('Keep scrolling until next elememnt appears.');
 	      _jsHttp2['default'].get('status', function (status_result) {
 	        var session_id = status_result.sessionId;
@@ -25964,6 +25971,26 @@
 	      });
 	    }
 	  }, {
+	    key: 'longPress',
+	    value: function longPress(node) {
+	      var _this7 = this;
+
+	      var duration = window.prompt('How many seconds to press?', 3);
+	      _jsHttp2['default'].get('status', function (status_result) {
+	        var session_id = status_result.sessionId;
+	        _jsHttp2['default'].post('session/' + session_id + '/longPress', JSON.stringify({
+	          duration: duration,
+	          path: node.attributes.classChain
+	        }), function (result) {
+	          console.log(result);
+	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
+	          setTimeout((function () {
+	            this.props.refreshApp();
+	          }).bind(_this7), 1000);
+	        });
+	      });
+	    }
+	  }, {
 	    key: 'drag',
 	    value: function drag(node) {
 	      var x = window.prompt('Drag horizontal by distance x =');
@@ -25972,7 +25999,7 @@
 	  }, {
 	    key: 'execute',
 	    value: function execute(content) {
-	      var _this7 = this;
+	      var _this8 = this;
 
 	      this.setState({
 	        selectedNode: null
@@ -25985,7 +26012,7 @@
 	          console.log(result);
 	          setTimeout((function () {
 	            this.props.refreshApp();
-	          }).bind(_this7), 1000);
+	          }).bind(_this8), 1000);
 	        });
 	      });
 	    }

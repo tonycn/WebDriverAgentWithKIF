@@ -24,7 +24,7 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
 - (instancetype)initWithAttributes:(NSDictionary *)attrs {
     self = [super init];
     if (self) {
-      self.action = attrs[@"action"];
+      self.action = [self.class actionString];
       self.path = attrs[@"path"];
       self.originCommandDict = attrs;
     }
@@ -34,7 +34,10 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
 - (void)waitUntilElement:(void (^)(UIView * _Nullable element))resultBlock
 {
   const NSTimeInterval defaultTimeout = 1;
-  [self.class findElementByClassChain:self.path shouldReturnAfterFirstMatch:YES timeout:1 elementsDidFind:^(NSArray<UIView *> * _Nonnull elements) {
+  [self.class findElementByClassChain:self.path
+          shouldReturnAfterFirstMatch:YES
+                              timeout:defaultTimeout
+                      elementsDidFind:^(NSArray<UIView *> * _Nonnull elements) {
     resultBlock(elements.firstObject);
   }];
 }

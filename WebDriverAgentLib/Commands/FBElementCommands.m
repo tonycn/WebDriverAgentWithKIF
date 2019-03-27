@@ -31,6 +31,7 @@
 #import "KIFTypist.h"
 #import "FBUIDismissKeyboardCommand.h"
 #import "FBUIScrollCommand.h"
+#import "FBUILongPressElementCommand.h"
 
 @interface FBElementCommands ()
 @end
@@ -98,17 +99,8 @@
 
 + (id<FBResponsePayload>)handleScroll:(FBRouteRequest *)request
 {
-  CGFloat x = [request.arguments[@"x"] floatValue];
-  CGFloat y = [request.arguments[@"y"] floatValue];
-  NSString *until = request.arguments[@"until"];
-  NSString *onElement = request.arguments[@"path"];
-
   FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
-  FBUIScrollCommand *command = [FBUITestScript generateCommandByAction:[FBUIScrollCommand actionString]
-                                                          classChain:onElement];
-  command.x = x;
-  command.y = y;
-  command.until = until;
+  FBUIScrollCommand *command = [[FBUIScrollCommand alloc] initWithAttributes:request.arguments];
   
   if (command.x < 1 && command.y < 1) {
     return FBResponseWithErrorFormat(@"Unsupported scroll type");
@@ -136,9 +128,21 @@
 
 + (id<FBResponsePayload>)longPress:(FBRouteRequest *)request
 {
-  
+  FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
+  FBUILongPressElementCommand *command = [[FBUILongPressElementCommand alloc] initWithAttributes:request.arguments];
+  [command waitUntilElement:^(UIView * _Nullable element) {
+    [command executeOn:element finishBlock:^(BOOL succ) {
+      if (succ) {
+        [command reducePathIfPossibleForElement:element];
+        id<FBResponsePayload> payload = FBResponseWithObject(command.toResponsePayloadObject);
+        [future fillRealResponsePayload:payload];
+      } else {
+        [future fillRealResponsePayload:FBResponseWithErrorFormat(@"Unsupported")];
+      }
+    }];
+  }];
+  return future;
 }
-
 
 + (id<FBResponsePayload>)handleDragCoordinate:(FBRouteRequest *)request
 {
@@ -200,7 +204,7 @@
 + (id<FBResponsePayload>)handleCommand:(FBRouteRequest *)request
 {
   NSString *action = request.arguments[@"action"];
-  NSString *classChain = request.arguments[@"classChain"];
+  NSString *classChain = request.arguments[@"path"];
   FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
   FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:action
                                                           classChain:classChain];
