@@ -12,6 +12,9 @@
 #import "FBUIDismissKeyboardCommand.h"
 #import "FBUIScrollCommand.h"
 #import "FBUILongPressElementCommand.h"
+#import "FBUITextInputCommand.h"
+#import "FBUIIdleCommand.h"
+#import "FBUICustomCommand.h"
 
 @implementation FBUITestScript
 
@@ -65,6 +68,12 @@
     command = [[FBUIScrollCommand alloc] initWithAttributes:commandDict];
   } else if ([actionStr isEqualToString:[FBUILongPressElementCommand actionString]]) {
     command = [[FBUILongPressElementCommand alloc] initWithAttributes:commandDict];
+  } else if ([actionStr isEqualToString:[FBUITextInputCommand actionString]]) {
+    command = [[FBUITextInputCommand alloc] initWithAttributes:commandDict];
+  } else if ([actionStr isEqualToString:[FBUIIdleCommand actionString]]) {
+    command = [[FBUIIdleCommand alloc] initWithAttributes:commandDict];
+  } else if ([actionStr isEqualToString:[FBUICustomCommand actionString]]) {
+    command = [[FBUICustomCommand alloc] initWithAttributes:commandDict];
   } else {
     // Not supported
     command = [[FBUIBaseCommand alloc] init];
@@ -73,9 +82,11 @@
 }
 
 + (FBUIBaseCommand * _Nonnull)generateCommandByAction:(NSString *)action
-                                           classChain:(NSString *)classChain
+                                                props:(NSDictionary *)props;
 {
-  return [self generateCommandBy:@{@"action": action?:@"", @"path": classChain?:@""}];
+  NSMutableDictionary *mutableProps = [props mutableCopy];
+  mutableProps[@"action"] = action;
+  return [self generateCommandBy:mutableProps];
 }
 
 - (void)executeDidFinish:(void (^)(BOOL succ, NSError *error))resultBlock

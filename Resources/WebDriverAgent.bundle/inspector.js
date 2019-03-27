@@ -25799,6 +25799,20 @@
 	              return _this.longPress(_this.state.selectedNode);
 	            } },
 	          'Long press'
+	        ),
+	        _react2['default'].createElement(
+	          Button,
+	          { onClick: function (event) {
+	              return _this.idle(_this.state.selectedNode);
+	            } },
+	          'Idle'
+	        ),
+	        _react2['default'].createElement(
+	          Button,
+	          { onClick: function (event) {
+	              return _this.customCommand(_this.state.selectedNode);
+	            } },
+	          'Custom'
 	        )
 	      );
 
@@ -25892,101 +25906,93 @@
 	  }, {
 	    key: 'tap',
 	    value: function tap(node) {
-	      var _this3 = this;
-
 	      this.setState({ selectedNode: null });
-	      _jsHttp2['default'].get('status', function (status_result) {
-	        var session_id = status_result.sessionId;
-	        _jsHttp2['default'].post('session/' + session_id + '/command', JSON.stringify({
-	          action: 'tap',
-	          path: node.attributes.classChain
-	        }), function (result) {
-	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
-	          setTimeout((function () {
-	            this.props.refreshApp();
-	          }).bind(_this3), 1000);
-	        });
+	      this.sendCommand({
+	        action: 'tap',
+	        path: node.attributes.classChain
 	      });
 	    }
 	  }, {
 	    key: 'assert',
 	    value: function assert(node) {
-	      var _this4 = this;
-
 	      this.setState({ selectedNode: null });
-	      _jsHttp2['default'].get('status', function (status_result) {
-	        var session_id = status_result.sessionId;
-	        _jsHttp2['default'].post('session/' + session_id + '/command', JSON.stringify({
-	          action: 'assert',
-	          path: node.attributes.classChain
-	        }), function (result) {
-	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
-	          setTimeout((function () {
-	            this.props.refreshApp();
-	          }).bind(_this4), 1000);
-	        });
+	      this.sendCommand({
+	        action: 'assert',
+	        path: node.attributes.classChain
 	      });
 	    }
 	  }, {
 	    key: 'inputText',
-	    value: function inputText(node) {}
+	    value: function inputText(node) {
+	      var text = window.prompt('Type text to input:');
+	      this.sendCommand({
+	        action: 'input',
+	        text: text,
+	        path: node.attributes.classChain
+	      });
+	    }
 	  }, {
 	    key: 'hideKeyboard',
 	    value: function hideKeyboard() {
-	      var _this5 = this;
-
-	      _jsHttp2['default'].get('status', function (status_result) {
-	        var session_id = status_result.sessionId;
-	        _jsHttp2['default'].post('session/' + session_id + '/keyboard/dismiss', JSON.stringify({}), function (result) {
-	          console.log(result);
-	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
-	          setTimeout((function () {
-	            this.props.refreshApp();
-	          }).bind(_this5), 1000);
-	        });
+	      this.sendCommand({
+	        action: 'hideKeyboard'
 	      });
 	    }
 	  }, {
 	    key: 'scroll',
 	    value: function scroll(node) {
-	      var _this6 = this;
-
 	      var x = window.prompt('Scroll horizontal by distance x =', 0);
 	      var y = window.prompt('Scroll vertical by distance y =', 44);
-	      var findElement = window.prompt('Keep scrolling until next elememnt appears.');
-	      _jsHttp2['default'].get('status', function (status_result) {
-	        var session_id = status_result.sessionId;
-	        _jsHttp2['default'].post('session/' + session_id + '/scroll', JSON.stringify({
-	          x: x,
-	          y: y,
-	          path: node.attributes.classChain,
-	          until: findElement ? findElement : ""
-	        }), function (result) {
-	          console.log(result);
-	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
-	          setTimeout((function () {
-	            this.props.refreshApp();
-	          }).bind(_this6), 1000);
-	        });
+	      var untilElement = window.prompt('Keep scrolling until next elememnt appears.');
+	      this.sendCommand({
+	        action: 'scroll',
+	        x: x,
+	        y: y,
+	        path: node.attributes.classChain,
+	        until: untilElement ? untilElement : ""
 	      });
 	    }
 	  }, {
 	    key: 'longPress',
 	    value: function longPress(node) {
-	      var _this7 = this;
-
 	      var duration = window.prompt('How many seconds to press?', 3);
+	      this.sendCommand({
+	        action: 'longPress',
+	        duration: duration,
+	        path: node.attributes.classChain
+	      });
+	    }
+	  }, {
+	    key: 'customCommand',
+	    value: function customCommand() {
+	      var handlerName = window.prompt('Input costom command handler name:?');
+	      this.sendCommand({
+	        handler: handlerName,
+	        action: 'custom'
+	      });
+	    }
+	  }, {
+	    key: 'idle',
+	    value: function idle() {
+	      var duration = window.prompt('Input costom command handler name:?');
+	      this.sendCommand({
+	        duration: duration,
+	        action: 'idle'
+	      });
+	    }
+	  }, {
+	    key: 'sendCommand',
+	    value: function sendCommand(requestObj) {
+	      var _this3 = this;
+
 	      _jsHttp2['default'].get('status', function (status_result) {
 	        var session_id = status_result.sessionId;
-	        _jsHttp2['default'].post('session/' + session_id + '/longPress', JSON.stringify({
-	          duration: duration,
-	          path: node.attributes.classChain
-	        }), function (result) {
+	        _jsHttp2['default'].post('session/' + session_id + '/command', JSON.stringify(requestObj), function (result) {
 	          console.log(result);
 	          _pubsubJs2['default'].publish('AddScriptCommandMessage', result['value']['command']);
 	          setTimeout((function () {
 	            this.props.refreshApp();
-	          }).bind(_this7), 1000);
+	          }).bind(_this3), 1000);
 	        });
 	      });
 	    }
@@ -25999,7 +26005,7 @@
 	  }, {
 	    key: 'execute',
 	    value: function execute(content) {
-	      var _this8 = this;
+	      var _this4 = this;
 
 	      this.setState({
 	        selectedNode: null
@@ -26012,7 +26018,7 @@
 	          console.log(result);
 	          setTimeout((function () {
 	            this.props.refreshApp();
-	          }).bind(_this8), 1000);
+	          }).bind(_this4), 1000);
 	        });
 	      });
 	    }

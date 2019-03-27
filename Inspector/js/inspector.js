@@ -79,6 +79,12 @@ class Inspector extends React.Component {
         <Button onClick={(event) => this.longPress(this.state.selectedNode)}>
           Long press
         </Button>
+        <Button onClick={(event) => this.idle(this.state.selectedNode)}>
+          Idle
+        </Button>
+        <Button onClick={(event) => this.customCommand(this.state.selectedNode)}>
+          Custom
+        </Button>
       </span>
  
 
@@ -149,107 +155,78 @@ class Inspector extends React.Component {
 
   tap(node) {
     this.setState({selectedNode: null})
-    HTTP.get(
-      'status', (status_result) => {
-        var session_id = status_result.sessionId;
-        HTTP.post(
-          'session/' + session_id + '/command',
-          JSON.stringify({
-            action: 'tap',
-            path: node.attributes.classChain
-          }),
-          (result) => {
-            PubSub.publish('AddScriptCommandMessage', result['value']['command']);
-            setTimeout(function () {
-              this.props.refreshApp();
-            }.bind(this), 1000)
-          },
-        );
-      },
-    );
+    this.sendCommand({
+      action: 'tap',
+      path: node.attributes.classChain
+    });
   }
   assert(node) {
     this.setState({selectedNode: null})
-    HTTP.get(
-      'status', (status_result) => {
-        var session_id = status_result.sessionId;
-        HTTP.post(
-          'session/' + session_id + '/command',
-          JSON.stringify({
-            action: 'assert',
-            path: node.attributes.classChain
-          }),
-          (result) => {
-            PubSub.publish('AddScriptCommandMessage', result['value']['command']);
-            setTimeout(function () {
-              this.props.refreshApp();
-            }.bind(this), 1000)
-          },
-        );
-      },
-    );
+    this.sendCommand({
+      action: 'assert',
+      path: node.attributes.classChain
+    });
   }
   inputText(node) {
-
+    let text = window.prompt('Type text to input:')
+    this.sendCommand({
+      action: 'input',
+      text: text,
+      path: node.attributes.classChain
+    });
   }
 
   hideKeyboard() {
-    HTTP.get(
-      'status', (status_result) => {
-        var session_id = status_result.sessionId;
-        HTTP.post(
-          'session/' + session_id + '/keyboard/dismiss',
-          JSON.stringify({}),
-          (result) => {
-            console.log(result)
-            PubSub.publish('AddScriptCommandMessage', result['value']['command']);
-            setTimeout(function () {
-              this.props.refreshApp();
-            }.bind(this), 1000)
-          },
-        );
-      },
-    );
+    this.sendCommand({
+      action: 'hideKeyboard'
+    });
   }
 
   scroll(node) {
     let x = window.prompt('Scroll horizontal by distance x =', 0)
     let y = window.prompt('Scroll vertical by distance y =', 44)
-    let findElement = window.prompt('Keep scrolling until next elememnt appears.')
-    HTTP.get(
-      'status', (status_result) => {
-        var session_id = status_result.sessionId;
-        HTTP.post(
-          'session/' + session_id + '/scroll',
-          JSON.stringify({
-            x: x,
-            y: y,
-            path: node.attributes.classChain,
-            until: findElement ? findElement  : ""
-          }),
-          (result) => {
-            console.log(result)
-            PubSub.publish('AddScriptCommandMessage', result['value']['command']);
-            setTimeout(function () {
-              this.props.refreshApp();
-            }.bind(this), 1000)
-          },
-        );
-      },
-    );
+    let untilElement = window.prompt('Keep scrolling until next elememnt appears.')
+    this.sendCommand({
+      action: 'scroll',
+      x: x,
+      y: y,
+      path: node.attributes.classChain,
+      until: untilElement ? untilElement  : ""
+    });
   }
 
   longPress(node) {
     let duration = window.prompt('How many seconds to press?', 3)
+    this.sendCommand({
+      action: 'longPress',
+      duration: duration,
+      path: node.attributes.classChain
+    });
+  }
+
+  customCommand() {
+    let handlerName = window.prompt('Input costom command handler name:?')
+    this.sendCommand({
+      handler: handlerName,
+      action: 'custom'
+    });
+  }
+
+  idle() {
+    let duration = window.prompt('Input costom command handler name:?')
+    this.sendCommand({
+      duration: duration,
+      action: 'idle'
+    });
+  }
+
+  sendCommand(requestObj) {
     HTTP.get(
       'status', (status_result) => {
         var session_id = status_result.sessionId;
         HTTP.post(
-          'session/' + session_id + '/longPress',
-          JSON.stringify({
-            duration: duration,
-            path: node.attributes.classChain
-          }),
+          'session/' + session_id + '/command',
+          JSON.stringify(requestObj),
           (result) => {
             console.log(result)
             PubSub.publish('AddScriptCommandMessage', result['value']['command']);

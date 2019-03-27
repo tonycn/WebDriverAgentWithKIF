@@ -27,6 +27,7 @@
         finishBlock(NO);
     } else {
         [KIFTypist setKeystrokeDelay:self.interval];
+        finishBlock([KIFTypist enterCharacter:self.text]);
     }
 }
 

@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (FBUITestScript *)scriptByCommandLines:(NSString *)commandLines;
 
 + (FBUIBaseCommand * _Nonnull)generateCommandByAction:(NSString *)action
-                                           classChain:(NSString *)classChain;
+                                                props:(NSDictionary *)props;
 
 - (void)executeDidFinish:(void (^)(BOOL succ, NSError *error))resultBlock;
 

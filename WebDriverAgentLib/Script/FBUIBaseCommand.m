@@ -21,6 +21,15 @@ NSString * FBUICommandErrorInfoKeyReason = @"reason";
 
 @implementation FBUIBaseCommand
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.action = [self.class actionString];
+    }
+    return self;
+}
+
 - (instancetype)initWithAttributes:(NSDictionary *)attrs {
     self = [super init];
     if (self) {

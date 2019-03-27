@@ -195,7 +195,7 @@
   }
   
   FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:@"tap"
-                                                          classChain:[element fb_generateElementClassChain]];
+                                                               props:@{@"path": [element fb_generateElementClassChain]}];
   [command reducePathIfPossibleForElement:element];
   [element tapAtPoint:tapPoint];
   return  FBResponseWithObject(command.toResponsePayloadObject);
@@ -204,10 +204,9 @@
 + (id<FBResponsePayload>)handleCommand:(FBRouteRequest *)request
 {
   NSString *action = request.arguments[@"action"];
-  NSString *classChain = request.arguments[@"path"];
   FBResponseFuturePayload *future = [[FBResponseFuturePayload alloc] init];
   FBUIBaseCommand *command = [FBUITestScript generateCommandByAction:action
-                                                          classChain:classChain];
+                                                               props:request.arguments];
   [command waitUntilElement:^(UIView * _Nullable element) {
     if (element) {
       [command reducePathIfPossibleForElement:element];
