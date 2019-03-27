@@ -51,6 +51,7 @@
     [[FBRoute POST:@"/keys"] respondWithTarget:self action:@selector(handleKeys:)],
     [[FBRoute POST:@"/keyboard/dismiss"] respondWithTarget:self action:@selector(handleKeyboardDismiss:)],
     [[FBRoute POST:@"/scroll"] respondWithTarget:self action:@selector(handleScroll:)],
+    [[FBRoute POST:@"/longPress"] respondWithTarget:self action:@selector(longPress:)],
 
     [[FBRoute POST:@"/wda/tap/:uuid"] respondWithTarget:self action:@selector(handleTap:)],
     
@@ -132,6 +133,12 @@
   }];
   return future;
 }
+
++ (id<FBResponsePayload>)longPress:(FBRouteRequest *)request
+{
+  
+}
+
 
 + (id<FBResponsePayload>)handleDragCoordinate:(FBRouteRequest *)request
 {

@@ -11,6 +11,7 @@
 #import "FBUITapElementCommand.h"
 #import "FBUIDismissKeyboardCommand.h"
 #import "FBUIScrollCommand.h"
+#import "FBUILongPressElementCommand.h"
 
 @implementation FBUITestScript
 
@@ -61,8 +62,9 @@
   } else if ([actionStr isEqualToString:[FBUIDismissKeyboardCommand actionString]]) {
     command = [[FBUIDismissKeyboardCommand alloc] initWithAttributes:commandDict];
   } else if ([actionStr isEqualToString:[FBUIScrollCommand actionString]]) {
-    FBUIScrollCommand *scrollCommand = [[FBUIScrollCommand alloc] initWithAttributes:commandDict];
-    command = scrollCommand;
+    command = [[FBUIScrollCommand alloc] initWithAttributes:commandDict];
+  } else if ([actionStr isEqualToString:[FBUILongPressElementCommand actionString]]) {
+    command = [[FBUILongPressElementCommand alloc] initWithAttributes:commandDict];
   } else {
     // Not supported
     command = [[FBUIBaseCommand alloc] init];

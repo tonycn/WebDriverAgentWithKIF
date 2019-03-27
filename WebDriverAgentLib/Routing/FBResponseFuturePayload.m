@@ -24,7 +24,7 @@
     } else {
         _waitResponseSemaphore = dispatch_semaphore_create(0);
         self.responseToFill = response;
-        dispatch_time_t maxTimeOut = dispatch_time(DISPATCH_TIME_NOW, 30.0 * NSEC_PER_SEC);
+        dispatch_time_t maxTimeOut = dispatch_time(DISPATCH_TIME_NOW, 300.0 * NSEC_PER_SEC);
         dispatch_semaphore_wait(_waitResponseSemaphore, maxTimeOut);
     }
 }

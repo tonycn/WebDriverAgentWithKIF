@@ -76,6 +76,9 @@ class Inspector extends React.Component {
         <Button onClick={(event) => this.scroll(this.state.selectedNode)}>
           Scroll
         </Button>
+        <Button onClick={(event) => this.longPress(this.state.selectedNode)}>
+          Long press
+        </Button>
       </span>
  
 
@@ -223,6 +226,28 @@ class Inspector extends React.Component {
             y: y,
             path: node.attributes.classChain,
             until: findElement ? findElement  : ""
+          }),
+          (result) => {
+            console.log(result)
+            PubSub.publish('AddScriptCommandMessage', result['value']['command']);
+            setTimeout(function () {
+              this.props.refreshApp();
+            }.bind(this), 1000)
+          },
+        );
+      },
+    );
+  }
+
+  longPress(node) {
+    let duration = window.prompt('How many seconds to press?', 3)
+    HTTP.get(
+      'status', (status_result) => {
+        var session_id = status_result.sessionId;
+        HTTP.post(
+          'session/' + session_id + '/longPress',
+          JSON.stringify({
+            duration: duration
           }),
           (result) => {
             console.log(result)
